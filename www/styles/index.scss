@@ -1,0 +1,328 @@
+@use "./ai-tutor";
+
+:root {
+  // Typography scale (not part of Tailwind theme)
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-md: 18px;
+  --font-size-lg: 20px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 30px;
+  --font-size-3xl: 36px;
+  --font-size-4xl: 48px;
+
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.6;
+  --line-height-relaxed: 1.75;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  // Spacing
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+  --spacing-3xl: 64px;
+
+  // Transitions
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 400ms ease;
+  --primary-color: #f0efe9;
+  --secondary-color: #b2b2b2;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-normal);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    line-height: var(--line-height-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  // ─── 6. Heading Defaults ────────────────────────────────────
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-sans);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+    line-height: var(--line-height-tight);
+    letter-spacing: -0.02em;
+  }
+
+  h1 {
+    font-size: var(--font-size-4xl);
+    line-height: var(--line-height-tight);
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    font-size: var(--font-size-3xl);
+    line-height: var(--line-height-tight);
+    letter-spacing: -0.025em;
+  }
+
+  h3 {
+    font-size: var(--font-size-2xl);
+    line-height: var(--line-height-snug);
+    letter-spacing: -0.02em;
+  }
+
+  h4 {
+    font-size: var(--font-size-xl);
+    line-height: var(--line-height-snug);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  h5 {
+    font-size: var(--font-size-lg);
+    line-height: var(--line-height-snug);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  h6 {
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-normal);
+    font-weight: var(--font-weight-semibold);
+  }
+
+  // ─── 7. Paragraph Defaults ──────────────────────────────────
+  li,
+  a,
+  p {
+    font-size: var(--font-size-xs);
+    font-weight: 400;
+    line-height: var(--line-height-snug);
+    color: var(--color-text);
+    max-width: 70ch; // prevent over-long lines
+  }
+
+  // ─── 9. Button Defaults ─────────────────────────────────────
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    padding: 10px var(--spacing-lg); // 10px 24px
+    font-family: var(--font-sans);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    line-height: 1;
+    color: var(--color-text-inverse);
+    background-color: var(--color-primary);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-full); // pill-style — matches the screenshot
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast),
+      opacity var(--transition-fast);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-primary-hover);
+      box-shadow: var(--shadow-sm);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-border-focus);
+      outline-offset: 2px;
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(1px);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  // outline / ghost variant
+  button.btn-outline {
+    color: var(--color-primary);
+    background-color: transparent;
+    border-color: var(--color-border);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-bg-hover);
+      border-color: var(--color-primary);
+      box-shadow: none;
+    }
+  }
+
+  // accent variant
+  button.btn-accent {
+    background-color: var(--color-accent);
+
+    &:hover:not(:disabled) {
+      background-color: var(--color-accent-dark);
+    }
+  }
+
+  // ─── 10. Link Defaults ──────────────────────────────────────
+
+  a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--color-accent-dark);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-border-focus);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+  }
+
+  // ─── 11. Lists ──────────────────────────────────────────────
+
+  ul,
+  ol {
+    padding-left: var(--spacing-lg);
+    line-height: var(--line-height-normal);
+  }
+
+  li {
+    margin-bottom: var(--spacing-xs);
+  }
+
+  // ─── 12. Form elements ──────────────────────────────────────
+
+  input,
+  select {
+    font-family: var(--font-sans);
+    font-size: var(--font-size-sm);
+    color: var(--color-text);
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 8px var(--spacing-md);
+    line-height: var(--line-height-normal);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    width: 100%;
+
+    &::placeholder {
+      color: var(--color-text-muted);
+    }
+
+    &:focus {
+      outline: none;
+      border-color: var(--color-border-focus);
+      box-shadow: 0 0 0 3px rgba(139, 158, 108, 0.18);
+    }
+  }
+
+  // ─── 13. Images & Media ─────────────────────────────────────
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+}
+
+// ─── 14. Utility classes ────────────────────────────────────
+.text-primary {
+  color: var(--color-primary) !important;
+}
+.text-accent {
+  color: var(--color-accent) !important;
+}
+.text-muted {
+  color: var(--color-text-secondary) !important;
+}
+.bg-card {
+  background-color: var(--color-bg-card);
+}
+.bg-page {
+  background-color: var(--color-bg);
+}
+.border-default {
+  border: 1.5px solid var(--color-border);
+}
+.radius-md {
+  border-radius: var(--radius-md);
+}
+.radius-lg {
+  border-radius: var(--radius-lg);
+}
+.shadow-card {
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+// ─── Themed scrollbar ────────────────────────────────────────
+.scrollbar-themed {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-info) transparent;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--color-info);
+    border-radius: 9999px;
+  }
+}

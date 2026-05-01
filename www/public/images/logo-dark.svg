@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" fill="none">
+  <defs>
+    <linearGradient id="gd" x1="15" y1="40" x2="130" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0%"   stop-color="#a78bfa"/>
+      <stop offset="45%"  stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow-dot" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Large 4-pointed sparkle cx=55 cy=80 R=40 -->
+  <path
+    d="M55,40 C58,60 75,77 95,80 C75,83 58,100 55,120 C52,100 35,83 15,80 C35,77 52,60 55,40 Z"
+    fill="url(#gd)" filter="url(#glow)"
+  />
+
+  <!-- Small 4-pointed sparkle cx=112 cy=54 R=18 -->
+  <path
+    d="M112,36 C113.5,45 121,52.5 130,54 C121,55.5 113.5,63 112,72 C110.5,63 103,55.5 94,54 C103,52.5 110.5,45 112,36 Z"
+    fill="url(#gd)" filter="url(#glow)"
+  />
+
+  <!-- Cardinal accent dots with glow -->
+  <circle cx="112" cy="27" r="2.5" fill="#a78bfa" opacity="0.85" filter="url(#glow-dot)"/>
+  <circle cx="139" cy="54" r="2.5" fill="#06b6d4" opacity="0.85" filter="url(#glow-dot)"/>
+  <circle cx="112" cy="81" r="2.5" fill="#a78bfa" opacity="0.85" filter="url(#glow-dot)"/>
+  <circle cx="85"  cy="54" r="2.5" fill="#06b6d4" opacity="0.85" filter="url(#glow-dot)"/>
+</svg>
