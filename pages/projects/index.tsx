@@ -16,7 +16,9 @@ function IframeCard({ p, index }: { p: Project; index: number }) {
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
     const el = cardRef.current;
-    if (!el) return;
+    if (el == null) {
+      return;
+    }
     const rect = el.getBoundingClientRect();
     const x = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
     const y = -((e.clientX - rect.left) / rect.width - 0.5) * 10;
@@ -112,7 +114,7 @@ function IframeCard({ p, index }: { p: Project; index: number }) {
 
 // ── Shopify Store Card ────────────────────────────────────────────────────────
 function StoreCard({ s, index }: { s: ShopifyStore; index: number }) {
-  const { ref, inView } = useInView(0.08);
+  const { ref, inView } = useInView<HTMLAnchorElement>(0.08);
   const colors = ["#00d4ff", "#a855f7", "#00ff88", "#ffd700", "#ff6b6b", "#00d4ff", "#a855f7", "#00ff88"];
   const c = colors[index % colors.length]!;
   const newLocal = "w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0";
