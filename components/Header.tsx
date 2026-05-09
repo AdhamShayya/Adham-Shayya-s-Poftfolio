@@ -42,9 +42,11 @@ export default function Header() {
             <Link to="/" className="flex items-center gap-2 no-underline group">
               <div className="relative w-9 h-9 flex-shrink-0">
                 <div className="absolute inset-0 rounded-lg bg-[#00d4ff] opacity-20 group-hover:opacity-40 transition-opacity blur-sm" />
-                <div className="relative w-9 h-9 rounded-lg border border-[rgba(0,212,255,0.5)] flex items-center justify-center text-[#00d4ff] font-bold text-lg font-serif">
-                  A
-                </div>
+                <img
+                  src="/images/adham.jpeg"
+                  alt="Adham Shayya"
+                  className="relative w-9 h-9 rounded-lg object-cover object-top border border-[rgba(0,212,255,0.5)]"
+                />
               </div>
               <span className="font-serif font-bold text-lg text-[#e8eaf6] tracking-tight">
                 Adham<span className="text-[#00d4ff]">.</span><span className="text-[#a855f7]">dev</span>
@@ -90,13 +92,23 @@ export default function Header() {
               >
                 Hire Me
               </a>
-              <button
+              <div
                 onClick={() => setOpen((v) => !v)}
-                className="md:hidden w-9 h-9 flex items-center justify-center rounded-xl border border-[rgba(0,212,255,0.2)] text-[#8892b0] hover:text-[#00d4ff] hover:border-[rgba(0,212,255,0.5)] transition-all bg-transparent cursor-pointer"
                 aria-label="Toggle menu"
               >
-                <SVGIcon name={open ? "x" : "menu"} size={17} strokeWidth={2} />
-              </button>
+                {open ? (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                ) : (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
+                  </svg>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -104,7 +116,7 @@ export default function Header() {
 
       {/* ── Mobile drawer ── */}
       <div
-        className={`fixed inset-0 z-40 transition-all duration-300 ${open ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`fixed inset-0 z-[60] transition-all duration-300 ${open ? "pointer-events-auto" : "pointer-events-none"}`}
       >
         {/* Backdrop */}
         <div
@@ -113,18 +125,17 @@ export default function Header() {
         />
         {/* Panel */}
         <div
-          className={`absolute top-0 right-0 bottom-0 w-72 bg-[#0f0f1a] border-l border-[rgba(0,212,255,0.15)] flex flex-col transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}
+          className={`absolute top-0 right-0 bottom-0 w-72  border-l border-[rgba(0,212,255,0.15)] flex flex-col transition-transform duration-300 ${open ? "translate-x-0" : "translate-x-full"}`}
         >
           {/* Top accent */}
           <div className="h-0.5 bg-gradient-to-r from-[#00d4ff] via-[#a855f7] to-transparent" />
           <div className="flex items-center justify-between px-6 py-5">
             <span className="font-serif font-bold text-[#e8eaf6]">Menu</span>
-            <button
+            <div
               onClick={() => setOpen(false)}
-              className="w-8 h-8 flex items-center justify-center rounded-lg border border-[rgba(0,212,255,0.2)] text-[#8892b0] bg-transparent cursor-pointer hover:text-[#00d4ff]"
             >
               <SVGIcon name="x" size={15} />
-            </button>
+            </div>
           </div>
           <nav className="flex-1 px-4 space-y-1">
             {NAV.map((l) => {
