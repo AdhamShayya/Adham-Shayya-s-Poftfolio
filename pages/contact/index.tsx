@@ -37,7 +37,7 @@ export default function ContactPage() {
   }
 
   return (
-    <main>
+    <main className="overflow-x-hidden">
       {/* ── Hero ── */}
       <section className="relative py-24 overflow-hidden">
         <GridBg />
@@ -87,16 +87,16 @@ export default function ContactPage() {
                   >
                     {c.icon}
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="text-xs text-[#4a5568] uppercase tracking-widest mb-0.5">{c.label}</p>
-                    <p className="text-sm text-[#e8eaf6] font-medium truncate group-hover:text-[#00d4ff] transition-colors">{c.value}</p>
+                    <p className="text-sm text-[#e8eaf6] font-medium break-all group-hover:text-[#00d4ff] transition-colors">{c.value}</p>
                   </div>
                   <span className="ml-auto text-[#4a5568] group-hover:text-[#00d4ff] transition-colors flex-shrink-0">→</span>
                 </a>
               ))}
 
               {/* Availability card */}
-              <div className="mt-6 p-5 rounded-2xl border border-[rgba(0,255,136,0.2)] bg-[rgba(0,255,136,0.04)]">
+                  <div className="mt-6 p-4 rounded-2xl border border-[rgba(0,255,136,0.2)] bg-[rgba(0,255,136,0.04)]">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse" />
                   <span className="text-xs text-[#00ff88] font-medium uppercase tracking-widest">Open to work</span>
@@ -108,7 +108,7 @@ export default function ContactPage() {
             {/* Right: form */}
             <div
               ref={formRef}
-              className={`lg:col-span-3 rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[#0f0f1a] p-8 ${formInView ? "animate-fade-in-up" : "opacity-0"}`}
+              className={`lg:col-span-3 rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[#0f0f1a] p-4 sm:p-8 ${formInView ? "animate-fade-in-up" : "opacity-0"}`}
             >
               {sent ? (
                 <div className="flex flex-col items-center justify-center h-full py-16 text-center">

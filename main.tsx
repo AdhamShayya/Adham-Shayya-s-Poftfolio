@@ -7,7 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "./tailwind.css";
 import "./styles/index.scss";
 
-import { createBrowserRouter, href, Outlet, RouterProvider } from "react-router";
+import { createBrowserRouter, href, Outlet, RouterProvider, useLocation } from "react-router";
 
 import LandingPage from "./pages";
 import AboutPage from "./pages/about";
@@ -26,9 +26,16 @@ function ThemeSync() {
   return null;
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => { window.scrollTo({ top: 0, left: 0, behavior: "instant" }); }, [pathname]);
+  return null;
+}
+
 function RootLayout() {
   return (
     <>
+      <ScrollToTop />
       <TopLoadingBar />
       <ThemeSync />
       <Header />
