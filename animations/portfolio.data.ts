@@ -281,6 +281,62 @@ export const EXPERIENCES: Experience[] = [
   },
 ];
 
+// ─── Mobile Apps ──────────────────────────────────────────────────────────────
+export interface MobileApp {
+  name: string;
+  playStoreUrl: string;
+  appStoreUrl: string;
+  category: string;
+  shortDescription: string;
+  features: string[];
+  tags: string[];
+  accent: string;
+  emoji: string;
+  downloads: string;
+  platform: "android" | "ios" | "both";
+}
+
+export const MOBILE_APPS: MobileApp[] = [
+  {
+    name: "HISENSE IRAQ",
+    playStoreUrl: "https://play.google.com/store/apps/details?id=com.eteservices.hisenseiraq",
+    appStoreUrl: "https://apps.apple.com/lb/app/hisense-iraq/id6741577388",
+    category: "Tools · Utilities",
+    shortDescription:
+      "A B2B mobile platform for professional AC technicians to register installation jobs, track work history, and earn rewards through Hisense Iraq's incentive program.",
+    features: [
+      "Easy job registration with customer & AC details",
+      "Rewards & incentive program per installation",
+      "Proof of work uploads — photos, invoices, signatures",
+      "Real-time notifications & performance analytics",
+    ],
+    tags: ["React Native", "Mobile", "B2B", "Tools"],
+    accent: "0,212,255",
+    emoji: "❄️",
+    downloads: "1K+",
+    platform: "both",
+  },
+  {
+    name: "Escapyo",
+    playStoreUrl: "https://play.google.com/store/apps/details?id=com.eteservices.escapyo",
+    appStoreUrl: "https://apps.apple.com/lb/app/escapyo/id6744685301",
+    category: "Travel & Local",
+    shortDescription:
+      "The ultimate travel companion for discovering top-rated tourist destinations, restaurants, hotels, rooftop bars, and hidden gems — all in one app.",
+    features: [
+      "Browse top-rated attractions & hidden gems",
+      "Explore detailed reviews, ratings & menus",
+      "Find experiences tailored to your preferences",
+      "Plan the perfect outing with ease",
+    ],
+    tags: ["React Native", "Mobile", "Travel", "Discovery"],
+    accent: "168,85,247",
+    emoji: "🌍",
+    downloads: "5+",
+    platform: "both",
+  },
+];
+
 // ─── Ghost words (parallax bg decoration) ─────────────────────────────────────
 export const GHOST_WORDS = ["CODE", "BUILD", "SHIP", "SCALE", "CREATE"];
 export const GHOST_CONFIG = [
