@@ -1,436 +1,352 @@
-﻿import { Link } from "react-router";
-import { useEffect, useState } from "react";
-import { useInView } from "../hooks/useInView";
-import { GlowOrb } from "../components/GlowOrb";
+import { useState, useEffect, useRef } from "react";
+import { Link } from "react-router";
 import { useParallax } from "../hooks/useParallax";
-import { SectionBadge } from "../components/SectionBadge";
+import { useInView } from "../hooks/useInView";
 import { AnimatedCounter } from "../components/AnimatedCounter";
 import {
   STATS,
-  PROJECTS,
-  PARTICLES,
-  GHOST_WORDS,
-  GHOST_CONFIG,
-  PARTICLE_COLORS,
   TECH_CATEGORIES,
+  PROJECTS,
   HERO_TAGLINES,
+  type Project,
 } from "../animations/portfolio.data";
 
-// ── Rotating tagline hook ────────────────────────────────────────────────────
-function useRotatingTagline(items: string[], interval = 2800) {
+// ── Rotating tagline ──────────────────────────────────────────────────────────
+function useRotating(items: string[], interval = 2800) {
   const [idx, setIdx] = useState(0);
-  const [visible, setVisible] = useState(true);
-
+  const [fade, setFade] = useState(true);
   useEffect(() => {
-    const timer = setInterval(() => {
-      setVisible(false);
+    const t = setInterval(() => {
+      setFade(false);
       setTimeout(() => {
         setIdx((i) => (i + 1) % items.length);
-        setVisible(true);
-      }, 350);
+        setFade(true);
+      }, 300);
     }, interval);
-    return () => clearInterval(timer);
+    return () => clearInterval(t);
   }, [items, interval]);
-
-  return { label: items[idx] ?? items[0]!, visible };
+  return { text: items[idx] ?? items[0], fade };
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
-export default function HomePage() {
-  const scrollY = useParallax();
-  const statsSection = useInView();
-  const techSection = useInView();
-  const projectsSection = useInView();
-  const projectsHeader = useInView();
-  const ctaSection = useInView();
-  const { label: tagline, visible: taglineVisible } =
-    useRotatingTagline(HERO_TAGLINES);
-
+// ── Grid background ───────────────────────────────────────────────────────────
+function GridBg() {
   return (
-    <div className="flex flex-col bg-bg">
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section className="relative flex items-center justify-center overflow-hidden min-h-[92vh] py-20">
-        {/* dot grid */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, rgba(26,35,50,0.07) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundImage: `
+          linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px)
+        `,
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(ellipse 80% 60% at 50% 50%, black 30%, transparent 100%)",
+      }}
+    />
+  );
+}
 
-        {/* parallax ghost words */}
-        {GHOST_WORDS.map((word, i) => {
-          const cfg = GHOST_CONFIG[i]!;
-          return (
-            <div
-              key={word}
-              className="absolute pointer-events-none select-none"
-              style={{
-                fontSize: "clamp(40px,7vw,108px)",
-                fontWeight: 900,
-                fontFamily: "var(--font-serif)",
-                color: "transparent",
-                WebkitTextStroke: "1.5px rgba(26,35,50,0.045)",
-                whiteSpace: "nowrap",
-                left: cfg.left,
-                top: cfg.top,
-                zIndex: 1,
-                transform: `translateY(${scrollY * cfg.pSpeed}px)`,
-                animation: `floatY ${8 + i * 1.6}s ease-in-out ${i * 0.9}s infinite${cfg.reverse ? " reverse" : ""}`,
-              }}
-            >
-              {word}
-            </div>
-          );
-        })}
+// ── Floating orb ─────────────────────────────────────────────────────────────
+function Orb({ color, size, top, left, delay = 0, blur = 80 }: {
+  color: string; size: number; top: string; left: string; delay?: number; blur?: number;
+}) {
+  return (
+    <div
+      className="absolute rounded-full pointer-events-none animate-orb-pulse"
+      style={{
+        width: size, height: size, top, left,
+        background: `radial-gradient(circle, ${color} 0%, transparent 70%)`,
+        filter: `blur(${blur}px)`,
+        animationDelay: `${delay}s`,
+        transform: "translate(-50%,-50%)",
+      }}
+    />
+  );
+}
 
-        {/* floating particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 3 }}>
-          {PARTICLES.map((p) => (
-            <div
-              key={p.id}
-              className="absolute rounded-full"
-              style={{
-                width: p.size,
-                height: p.size,
-                left: p.left,
-                bottom: "-8px",
-                background: PARTICLE_COLORS[p.colorIdx],
-                animation: `particleRise ${p.duration} ${p.delay} ease-in-out infinite`,
-                filter: "blur(0.4px)",
-              }}
-            />
+// ── Project card ─────────────────────────────────────────────────────────────
+function ProjectCard({ p, index }: { p: Project; index: number }) {
+  const { ref, inView } = useInView<HTMLAnchorElement>(0.1);
+  const accent = `rgb(${p.accent})`;
+  return (
+    <a
+      ref={ref}
+      href={p.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`group block rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.07)] bg-bg-card no-underline transition-all duration-300 hover:border-[rgba(0,212,255,0.3)] hover:-translate-y-2 ${
+        inView ? "animate-fade-in-up" : "opacity-0"
+      }`}
+      style={{ animationDelay: `${index * 80}ms` }}
+    >
+      {/* Top accent bar */}
+      <div className="h-0.5" style={{ background: `linear-gradient(90deg, ${accent}, transparent)` }} />
+      {/* Content */}
+      <div className="p-6">
+        <div className="flex items-start justify-between mb-4">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold"
+            style={{ background: `rgba(${p.accent},0.15)`, color: accent }}
+          >
+            {p.name[0]}
+          </div>
+          <span
+            className="text-xs font-medium px-2.5 py-1 rounded-full"
+            style={{ background: `rgba(${p.accent},0.12)`, color: accent }}
+          >
+            {p.category === "fullstack" ? "Full-Stack" : p.category === "shopify" ? "Shopify" : "Freelance"}
+          </span>
+        </div>
+        <h3 className="text-lg font-bold text-text mb-2 group-hover:text-[#00d4ff] transition-colors">
+          {p.name}
+        </h3>
+        <p className="text-sm text-text-secondary leading-relaxed mb-4 line-clamp-2">{p.description}</p>
+        <div className="flex flex-wrap gap-1.5">
+          {p.tags.slice(0, 4).map((t) => (
+            <span key={t} className="text-[11px] px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.05)] text-text-secondary">
+              {t}
+            </span>
           ))}
         </div>
+      </div>
+      {/* Hover glow footer */}
+      <div
+        className="px-6 py-3 border-t border-[rgba(255,255,255,0.05)] flex items-center gap-2 text-xs font-medium transition-colors"
+        style={{ color: accent }}
+      >
+        <span>View Live</span>
+        <span className="group-hover:translate-x-1 transition-transform">→</span>
+      </div>
+    </a>
+  );
+}
 
-        {/* glow orbs */}
-        <GlowOrb color="accent" size={700} opacity={0.2} blur={2}
-          className="animate-orb-pulse"
-          style={{ top: -220, left: -200, transform: `translateY(${scrollY * 0.2}px)`, zIndex: 1 }}
+// ── Main Page ─────────────────────────────────────────────────────────────────
+export default function HomePage() {
+  const scrollY = useParallax();
+  const { ref: statsRef, inView: statsInView } = useInView(0.2);
+  const tagline = useRotating(HERO_TAGLINES);
+
+  // Particles
+  const particles = Array.from({ length: 20 }, (_, i) => {
+    const h = (i * 2654435761) >>> 0;
+    return {
+      id: i,
+      left: `${h % 95}%`,
+      top: `${(h >> 5) % 90}%`,
+      size: 2 + ((h >> 10) % 3),
+      delay: `${(h >> 14) % 8}s`,
+      dur: `${8 + ((h >> 18) % 6)}s`,
+      color: i % 3 === 0 ? "#00d4ff" : i % 3 === 1 ? "#a855f7" : "#00ff88",
+    };
+  });
+
+  return (
+    <main>
+      {/* ════════════════════════════════════════════════════
+          HERO
+      ════════════════════════════════════════════════════ */}
+      <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+        {/* Grid + orbs */}
+        <GridBg />
+        <Orb color="rgba(0,212,255,0.25)" size={600} top="20%" left="15%" delay={0} blur={120} />
+        <Orb color="rgba(124,58,237,0.2)" size={500} top="60%" left="80%" delay={2} blur={100} />
+        <Orb color="rgba(0,255,136,0.15)" size={300} top="80%" left="30%" delay={4} blur={90} />
+
+        {/* Floating particles */}
+        {particles.map((p) => (
+          <div
+            key={p.id}
+            className="absolute rounded-full pointer-events-none animate-float"
+            style={{
+              left: p.left, top: p.top,
+              width: p.size, height: p.size,
+              background: p.color,
+              boxShadow: `0 0 ${p.size * 4}px ${p.color}`,
+              animationDelay: p.delay,
+              animationDuration: p.dur,
+            }}
+          />
+        ))}
+
+        {/* Scan line */}
+        <div
+          className="absolute left-0 right-0 h-px bg-linear-to-r from-transparent via-[rgba(0,212,255,0.4)] to-transparent pointer-events-none"
+          style={{ top: `calc(40% - ${scrollY * 0.1}px)` }}
         />
-        <GlowOrb color="warning" size={500} opacity={0.15}
-          style={{ bottom: -150, right: -80, zIndex: 1, transform: `translateY(${scrollY * -0.14}px)`, animation: "floatY 11s ease-in-out 1s infinite reverse" }}
-        />
-        <GlowOrb color="info" size={320} opacity={0.14}
-          style={{ top: "32%", right: "7%", zIndex: 1, transform: `translateY(${scrollY * 0.1}px)`, animation: "floatY 8s ease-in-out 2s infinite" }}
-        />
 
-        {/* hero content */}
-        <div className="container relative mx-auto px-6 flex flex-col items-center text-center" style={{ zIndex: 10 }}>
-          <SectionBadge color="info" icon="rocket" className="mb-8 animate-fade-in">
-            Available for new projects
-          </SectionBadge>
-
-          <h1
-            className="font-serif leading-tight mb-4 animate-fade-in-up"
-            style={{ fontSize: "clamp(2.8rem,7.5vw,5.2rem)", animationDelay: "80ms" }}
-          >
-            Adham Shayya
-          </h1>
-
-          {/* rotating tagline */}
-          <div className="h-12 flex items-center justify-center mb-6">
-            <span
-              className="text-xl md:text-2xl font-semibold font-mono"
-              style={{
-                color: "var(--color-info)",
-                opacity: taglineVisible ? 1 : 0,
-                transform: taglineVisible ? "translateY(0)" : "translateY(8px)",
-                transition: "opacity 0.35s ease, transform 0.35s ease",
-              }}
-            >
-              {tagline}
+        {/* Content */}
+        <div className="container mx-auto px-4 relative z-10 pt-8 pb-20">
+          {/* Status badge */}
+          <div className="flex justify-center mb-8 animate-fade-in-down">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,255,136,0.3)] bg-[rgba(0,255,136,0.06)] text-electric text-xs font-medium">
+              <span className="w-2 h-2 rounded-full bg-electric animate-pulse" />
+              Available for new projects
             </span>
           </div>
 
-          <p
-            className="animate-fade-in-up text-base md:text-lg leading-relaxed mb-10 max-w-2xl text-text-secondary"
-            style={{ animationDelay: "220ms" }}
+          {/* Name */}
+          <h1
+            className="text-center font-serif font-extrabold leading-tight mb-4 animate-fade-in-up"
+            style={{
+              fontSize: "clamp(3rem, 8vw, 7rem)",
+              transform: `translateY(${scrollY * 0.12}px)`,
+            }}
           >
-            I build full-stack web applications, Shopify experiences and
-            3D-powered UIs — from performant Node.js backends to WebGL
-            product configurators. Based in Beirut, working globally.
+            <span className="text-text">Adham </span>
+            <span className="gradient-text">Shayya</span>
+          </h1>
+
+          {/* Rotating tagline */}
+          <div
+            className="text-center mb-8 h-10 flex items-center justify-center animate-fade-in"
+            style={{ animationDelay: "200ms" }}
+          >
+            <span
+              className="text-xl md:text-2xl font-medium transition-opacity duration-300"
+              style={{
+                opacity: tagline.fade ? 1 : 0,
+                color: "#00d4ff",
+                textShadow: "0 0 20px rgba(0,212,255,0.5)",
+              }}
+            >
+              {tagline.text}
+            </span>
+          </div>
+
+          {/* Description */}
+          <p
+            className="text-center text-text-secondary text-lg max-w-xl mx-auto mb-12 leading-relaxed animate-fade-in-up"
+            style={{ animationDelay: "300ms" }}
+          >
+            Building high-performance web apps, Shopify experiences, and interactive 3D tools from
+            <span className="text-text"> Beirut, Lebanon</span>.
           </p>
 
-          <div
-            className="animate-fade-in-up flex flex-wrap gap-4 justify-center mb-10"
-            style={{ animationDelay: "340ms" }}
-          >
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-4 animate-fade-in-up" style={{ animationDelay: "450ms" }}>
             <Link
               to="/projects"
-              className="btn-glow inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-white bg-primary no-underline transition-all hover:opacity-90 hover:-translate-y-0.5"
+              className="px-8 py-3.5 rounded-xl font-semibold text-[#06060e] bg-[#00d4ff] hover:bg-[#00eeff] transition-all no-underline text-sm"
+              style={{ boxShadow: "0 0 30px rgba(0,212,255,0.4)" }}
             >
-              View Projects
+              View My Work
             </Link>
             <Link
-              to="/contact"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold border border-border text-text no-underline transition-all hover:bg-bg-card hover:-translate-y-0.5"
+              to="/about"
+              className="px-8 py-3.5 rounded-xl font-semibold text-text border border-[rgba(0,212,255,0.3)] hover:border-[#00d4ff] hover:bg-[rgba(0,212,255,0.06)] transition-all no-underline text-sm"
             >
-              Get In Touch
+              About Me
             </Link>
           </div>
 
-          {/* quick contact badges */}
-          <div
-            className="animate-fade-in flex flex-wrap gap-3 justify-center"
-            style={{ animationDelay: "500ms" }}
-          >
-            {[
-              { label: "adhamshayya123@gmail.com", href: "mailto:adhamshayya123@gmail.com" },
-              { label: "LinkedIn", href: "https://www.linkedin.com/in/adham-shayya" },
-              { label: "GitHub", href: "https://github.com/adhamshayya" },
-            ].map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs font-medium px-3.5 py-1.5 rounded-full no-underline transition-all hover:-translate-y-0.5"
-                style={{
-                  color: "var(--color-info)",
-                  background: "rgba(74,127,165,0.1)",
-                  border: "1px solid rgba(74,127,165,0.2)",
-                }}
-              >
-                {item.label}
-              </a>
-            ))}
+          {/* Scroll hint */}
+          <div className="flex justify-center mt-20 animate-float opacity-40">
+            <div className="w-px h-16 bg-linear-to-b from-[#00d4ff] to-transparent" />
           </div>
         </div>
       </section>
 
-      {/* ── STATS BAR ─────────────────────────────────────────────────────────── */}
-      <div
-        ref={statsSection.ref}
-        className="py-8 border-y border-border bg-bg-card"
-      >
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      {/* ════════════════════════════════════════════════════
+          STATS
+      ════════════════════════════════════════════════════ */}
+      <section ref={statsRef} className="relative py-16 border-y border-[rgba(0,212,255,0.08)]">
+        <div className="absolute inset-0 bg-linear-to-r from-[rgba(0,212,255,0.02)] via-[rgba(124,58,237,0.03)] to-[rgba(0,255,136,0.02)]" />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {STATS.map((s, i) => (
               <div
                 key={s.label}
-                className={`flex flex-col gap-1 ${statsSection.inView ? "animate-counter-pop" : "opacity-0"}`}
+                className={`text-center ${statsInView ? "animate-counter-pop" : "opacity-0"}`}
                 style={{ animationDelay: `${i * 100}ms` }}
               >
-                <span className="text-3xl md:text-4xl font-bold font-serif" style={{ color: "var(--color-info)" }}>
-                  <AnimatedCounter
-                    target={s.value}
-                    suffix={s.suffix}
-                    inView={statsSection.inView}
-                    duration={1600}
-                  />
-                </span>
-                <span className="text-xs font-medium text-text-secondary uppercase tracking-widest">
-                  {s.label}
-                </span>
+                <div
+                  className="text-4xl md:text-5xl font-extrabold font-serif mb-2"
+                  style={{ color: i % 2 === 0 ? "#00d4ff" : "#a855f7", textShadow: i % 2 === 0 ? "0 0 20px rgba(0,212,255,0.4)" : "0 0 20px rgba(168,85,247,0.4)" }}
+                >
+                  <AnimatedCounter target={s.value} suffix={s.suffix} inView={statsInView} />
+                </div>
+                <div className="text-xs text-text-secondary uppercase tracking-widest">{s.label}</div>
               </div>
             ))}
           </div>
         </div>
-      </div>
-
-      {/* ── TECH HIGHLIGHTS ───────────────────────────────────────────────────── */}
-      <section className="py-16 container mx-auto px-6">
-        <div
-          ref={techSection.ref}
-          className={`text-center mb-12 ${techSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-        >
-          <SectionBadge color="accent" icon="cpu" className="mb-6">
-            Tech Stack
-          </SectionBadge>
-          <h2 className="font-serif text-3xl md:text-4xl mb-4">
-            Tools I work with every day
-          </h2>
-          <p className="text-base max-w-xl mx-auto text-text-secondary">
-            From 3D WebGL scenes to Shopify storefronts, I pick the right tool for the job.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {TECH_CATEGORIES.slice(0, 6).map((cat, i) => (
-            <div
-              key={cat.id}
-              className={`card-lift bg-bg-card rounded-2xl p-6 border border-border shadow-sm ${techSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-              style={{
-                borderTop: `3px solid rgba(${cat.accentRgb},0.8)`,
-                animationDelay: techSection.inView ? `${i * 90}ms` : "0ms",
-              }}
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl">{cat.emoji}</span>
-                <span
-                  className="font-bold text-sm uppercase tracking-widest"
-                  style={{ color: `rgba(${cat.accentRgb},1)` }}
-                >
-                  {cat.label}
-                </span>
-              </div>
-              <p className="text-xs text-text-secondary leading-relaxed mb-4">
-                {cat.description}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {cat.techs.slice(0, 6).map((t) => (
-                  <span
-                    key={t}
-                    className="text-xs px-2.5 py-1 rounded-full font-medium"
-                    style={{
-                      background: `rgba(${cat.accentRgb},0.08)`,
-                      color: `rgba(${cat.accentRgb},1)`,
-                      border: `1px solid rgba(${cat.accentRgb},0.18)`,
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-                {cat.techs.length > 6 && (
-                  <span className="text-xs px-2.5 py-1 rounded-full font-medium text-text-muted border border-border">
-                    +{cat.techs.length - 6} more
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="text-center mt-8">
-          <Link
-            to="/features"
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm border border-border text-text-secondary no-underline transition-all hover:bg-bg-card hover:-translate-y-0.5"
-          >
-            View full tech stack →
-          </Link>
-        </div>
       </section>
 
-      <div className="h-px bg-border" />
-
-      {/* ── FEATURED PROJECTS ─────────────────────────────────────────────────── */}
-      <section className="py-16 container mx-auto px-6">
-        <div
-          ref={projectsHeader.ref}
-          className={`text-center mb-12 ${projectsHeader.inView ? "animate-fade-in-up" : "opacity-0"}`}
-        >
-          <SectionBadge color="warning" icon="globe" className="mb-6">
-            Work
-          </SectionBadge>
-          <h2 className="font-serif text-3xl md:text-4xl mb-4">
-            Projects I have shipped
-          </h2>
-          <p className="text-base max-w-xl mx-auto text-text-secondary">
-            Live production applications — from Shopify storefronts to full-stack platforms.
-          </p>
-        </div>
-
-        <div
-          ref={projectsSection.ref}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {PROJECTS.slice(0, 6).map((project, i) => (
-            <a
-              key={project.name}
-              href={project.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`card-lift bg-bg-card rounded-2xl p-6 border border-border shadow-sm no-underline flex flex-col gap-4 group ${projectsSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-              style={{
-                borderTop: `3px solid rgba(${project.accent},0.8)`,
-                animationDelay: projectsSection.inView ? `${i * 100}ms` : "0ms",
-              }}
-            >
-              <div className="flex items-start justify-between gap-2">
-                <h3
-                  className="font-bold text-lg group-hover:opacity-80 transition-opacity"
-                  style={{ color: `rgba(${project.accent},1)` }}
-                >
-                  {project.name}
-                </h3>
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full font-semibold shrink-0"
-                  style={{
-                    background: `rgba(${project.accent},0.1)`,
-                    color: `rgba(${project.accent},1)`,
-                    border: `1px solid rgba(${project.accent},0.2)`,
-                  }}
-                >
-                  {project.category === "shopify" ? "Shopify" : project.category === "freelance" ? "Freelance" : "Full-Stack"}
-                </span>
-              </div>
-
-              <p className="text-sm text-text-secondary leading-relaxed flex-1">
-                {project.description}
-              </p>
-
-              <div className="flex flex-wrap gap-1.5 mt-auto">
-                {project.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-xs px-2 py-0.5 rounded-md font-medium text-text-muted"
-                    style={{ background: "var(--color-bg-muted)" }}
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-
+      {/* ════════════════════════════════════════════════════
+          TECH MARQUEE
+      ════════════════════════════════════════════════════ */}
+      <section className="py-14 overflow-hidden">
+        <p className="text-center text-xs text-text-muted uppercase tracking-[0.2em] mb-8">Tech Stack</p>
+        <div className="relative">
+          <div className="flex gap-3 animate-marquee whitespace-nowrap">
+            {[...TECH_CATEGORIES, ...TECH_CATEGORIES].map((cat, i) => (
               <div
-                className="text-xs font-semibold flex items-center gap-1"
-                style={{ color: `rgba(${project.accent},0.9)` }}
+                key={`${cat.id}-${i}`}
+                className="shrink-0 flex items-center gap-2 px-5 py-2.5 rounded-full border border-[rgba(255,255,255,0.07)] bg-bg-card text-sm text-text-secondary"
               >
-                {project.url.replace("https://", "")} →
+                <span>{cat.emoji}</span>
+                <span>{cat.label}</span>
               </div>
-            </a>
-          ))}
-        </div>
-
-        <div className="text-center mt-8">
-          <Link
-            to="/projects"
-            className="btn-glow inline-flex items-center gap-2 px-7 py-3 rounded-xl font-semibold text-white bg-primary no-underline transition-all hover:opacity-90 hover:-translate-y-0.5"
-          >
-            View all projects →
-          </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      <div className="h-px bg-border" />
-
-      {/* ── CTA ───────────────────────────────────────────────────────────────── */}
-      <section className="py-16 md:py-24 container mx-auto px-6">
-        <div
-          ref={ctaSection.ref}
-          className={`rounded-3xl px-10 py-16 flex flex-col items-center text-center max-w-2xl mx-auto relative overflow-hidden bg-bg-card shadow-xl border border-border ${ctaSection.inView ? "animate-scale-in" : "opacity-0"}`}
-        >
-          <GlowOrb color="accent" size={400} opacity={0.22} blur={0}
-            style={{ top: -120, left: -60 }}
-            animation="floatY 9s ease-in-out infinite"
-          />
-          <GlowOrb color="info" size={280} opacity={0.16} blur={0}
-            style={{ bottom: -80, right: -60 }}
-            animation="floatY 7s ease-in-out 1.5s infinite reverse"
-          />
-
-          <div className="relative z-10 flex flex-col items-center gap-6">
-            <SectionBadge color="info" icon="send" className="mb-2">
-              Let us work together
-            </SectionBadge>
-            <h2 className="font-serif text-3xl md:text-4xl">
-              Have a project in mind?
+      {/* ════════════════════════════════════════════════════
+          FEATURED PROJECTS
+      ════════════════════════════════════════════════════ */}
+      <section className="py-24 relative overflow-hidden">
+        <Orb color="rgba(124,58,237,0.15)" size={400} top="50%" left="90%" blur={100} />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-16">
+            <span className="text-xs text-[#00d4ff] uppercase tracking-[0.2em] font-medium">Selected Work</span>
+            <h2 className="text-4xl md:text-5xl font-extrabold font-serif text-text mt-3">
+              Featured Projects
             </h2>
-            <p className="text-base text-text-secondary max-w-md">
-              Whether it is a new Shopify storefront, a full-stack platform, or a
-              3D product experience — I would love to hear about it.
-            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {PROJECTS.map((p, i) => (
+              <ProjectCard key={p.name} p={p} index={i} />
+            ))}
+          </div>
+          <div className="text-center mt-12">
             <Link
-              to="/contact"
-              className="btn-glow inline-flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-white bg-primary no-underline transition-all hover:opacity-90 hover:-translate-y-0.5"
+              to="/projects"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-xl border border-[rgba(0,212,255,0.3)] text-[#00d4ff] hover:bg-[rgba(0,212,255,0.06)] transition-all no-underline text-sm font-medium"
             >
-              Start a conversation →
+              All Projects & Shopify Stores →
             </Link>
           </div>
         </div>
       </section>
-    </div>
+
+      {/* ════════════════════════════════════════════════════
+          CTA
+      ════════════════════════════════════════════════════ */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="absolute inset-0">
+          <GridBg />
+          <Orb color="rgba(0,212,255,0.2)" size={500} top="50%" left="50%" blur={120} />
+        </div>
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2
+            className="font-serif font-extrabold text-text mb-6"
+            style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+          >
+            Let's Build Something <span className="gradient-text">Remarkable</span>
+          </h2>
+          <p className="text-text-secondary text-lg max-w-xl mx-auto mb-10">
+            Open to full-time roles, freelance projects, and interesting collaborations.
+          </p>
+          <a
+            href="mailto:adhamshayya123@gmail.com"
+            className="inline-flex items-center gap-3 px-10 py-4 rounded-xl font-bold text-[#06060e] bg-[#00d4ff] hover:bg-[#00eeff] transition-all no-underline text-base btn-glow"
+          >
+            Get In Touch
+            <span>→</span>
+          </a>
+        </div>
+      </section>
+    </main>
   );
 }

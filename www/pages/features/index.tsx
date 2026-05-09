@@ -1,158 +1,126 @@
-﻿import { useInView } from "../../hooks/useInView";
-import { GlowOrb } from "../../components/GlowOrb";
-import { SectionBadge } from "../../components/SectionBadge";
-import { TECH_CATEGORIES, PARTICLES, PARTICLE_COLORS, GHOST_WORDS, GHOST_CONFIG } from "../../animations/portfolio.data";
+import { useInView } from "../../hooks/useInView";
 import { useParallax } from "../../hooks/useParallax";
+import { TECH_CATEGORIES, type TechCategory } from "../../animations/portfolio.data";
 
-export default function SkillsPage() {
-  const scrollY = useParallax();
-  const heroSection = useInView();
-  const gridSection = useInView();
+
+// Map accent rgb to a neon color
+function accentColor(rgb: string) {
+  if (rgb === "74,127,165") return "#00d4ff";
+  if (rgb === "139,158,108") return "#00ff88";
+  if (rgb === "212,168,67") return "#ffd700";
+  return "#a855f7";
+}
+
+function CategoryCard({ cat, index }: { cat: TechCategory; index: number }) {
+  const { ref, inView } = useInView(0.08);
+  const color = accentColor(cat.accentRgb);
+  // Alternate big/small bento cells
+  const isBig = index === 0 || index === 3 || index === 4 || index === 7 || index === 8;
 
   return (
-    <div className="flex flex-col bg-bg overflow-hidden">
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section
-        ref={heroSection.ref}
-        className="relative flex flex-col items-center text-center overflow-hidden py-20"
-      >
+    <div
+      ref={ref}
+      className={`${isBig ? "lg:col-span-2" : "lg:col-span-1"} group rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[#0f0f1a] p-6 transition-all duration-300 hover:border-[rgba(0,212,255,0.25)] hover:-translate-y-1 ${
+        inView ? "animate-fade-in-up" : "opacity-0"
+      }`}
+      style={{
+        animationDelay: `${index * 60}ms`,
+      }}
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
         <div
-          className="absolute inset-0 pointer-events-none opacity-30"
+          className="w-11 h-11 rounded-xl flex items-center justify-center text-xl"
+          style={{ background: `${color}15`, boxShadow: `0 0 16px ${color}25` }}
+        >
+          {cat.emoji}
+        </div>
+        <div>
+          <h3 className="font-bold text-[#e8eaf6] text-base group-hover:text-[#00d4ff] transition-colors">
+            {cat.label}
+          </h3>
+          <p className="text-xs text-[#4a5568] mt-0.5 line-clamp-1">{cat.description}</p>
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="h-px mb-4" style={{ background: `linear-gradient(90deg, ${color}30, transparent)` }} />
+
+      {/* Tech pills */}
+      <div className="flex flex-wrap gap-2">
+        {cat.techs.map((t) => (
+          <span
+            key={t}
+            className="text-xs px-2.5 py-1 rounded-lg font-mono transition-all duration-200 hover:scale-105 cursor-default"
+            style={{
+              background: `${color}0d`,
+              color: "#8892b0",
+              border: `1px solid ${color}20`,
+            }}
+          >
+            {t}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function FeaturesPage() {
+  const scrollY = useParallax();
+
+  return (
+    <main>
+      {/* ── Hero ── */}
+      <section className="relative py-24 overflow-hidden">
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)`,
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 100%)",
+      }}
+    />
+        <div
+          className="absolute top-0 left-1/3 w-96 h-96 rounded-full pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
+            background: "radial-gradient(circle, rgba(0,255,136,0.1) 0%, transparent 70%)",
+            filter: "blur(100px)",
+            transform: `translateY(${scrollY * 0.06}px)`,
           }}
         />
-        {GHOST_WORDS.map((word, i) => {
-          const cfg = GHOST_CONFIG[i]!;
-          return (
-            <div
-              key={word}
-              className="absolute pointer-events-none select-none"
-              style={{
-                fontSize: "clamp(40px,7vw,108px)",
-                fontWeight: 900,
-                fontFamily: "var(--font-serif)",
-                color: "transparent",
-                WebkitTextStroke: "1.5px rgba(26,35,50,0.042)",
-                whiteSpace: "nowrap",
-                left: cfg.left,
-                top: cfg.top,
-                zIndex: 1,
-                transform: `translateY(${scrollY * cfg.pSpeed}px)`,
-                animation: `floatY ${8 + i * 1.6}s ease-in-out ${i * 0.9}s infinite${cfg.reverse ? " reverse" : ""}`,
-              }}
-            >
-              {word}
-            </div>
-          );
-        })}
-
-        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 3 }}>
-          {PARTICLES.map((p) => (
-            <div
-              key={p.id}
-              className="absolute rounded-full"
-              style={{
-                width: p.size, height: p.size,
-                left: p.left, bottom: "-8px",
-                background: PARTICLE_COLORS[p.colorIdx],
-                animation: `particleRise ${p.duration} ${p.delay} ease-in-out infinite`,
-                filter: "blur(0.4px)",
-              }}
-            />
-          ))}
-        </div>
-
-        <GlowOrb color="accent" size={700} opacity={0.22} blur={2}
-          className="animate-orb-pulse"
-          style={{ top: -220, left: -180, zIndex: 1 }}
-        />
-        <GlowOrb color="info" size={450} opacity={0.16}
-          style={{ bottom: -100, right: -80, zIndex: 1 }}
-          animation="floatY 10s ease-in-out 1s infinite reverse"
-        />
-
-        <div className="container relative z-10 max-w-3xl mx-auto px-6">
-          <SectionBadge icon="cpu" color="info"
-            className={`mb-8 ${heroSection.inView ? "animate-fade-in" : "opacity-0"}`}
-          >
-            Tech Stack
-          </SectionBadge>
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,255,136,0.3)] bg-[rgba(0,255,136,0.06)] text-[#00ff88] text-xs font-medium mb-8 animate-fade-in">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" />
+            Stack
+          </div>
           <h1
-            className={`font-serif text-4xl md:text-5xl mb-5 ${heroSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-            style={{ animationDelay: "80ms" }}
+            className="font-serif font-extrabold text-[#e8eaf6] mb-6 animate-fade-in-up"
+            style={{ fontSize: "clamp(2.5rem,6vw,5rem)" }}
           >
-            Tools, technologies &amp; expertise
+            Full <span className="gradient-text">Tech Stack</span>
           </h1>
-          <p
-            className={`text-base md:text-lg leading-relaxed text-text-secondary ${heroSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-            style={{ animationDelay: "200ms" }}
-          >
-            A comprehensive breakdown of every tool and technology I use to build
-            production-ready applications — from WebGL 3D scenes to Shopify storefronts.
+          <p className="text-[#8892b0] text-lg max-w-lg mx-auto animate-fade-in-up" style={{ animationDelay: "150ms" }}>
+            {TECH_CATEGORIES.reduce((acc, c) => acc + c.techs.length, 0)}+ technologies across{" "}
+            {TECH_CATEGORIES.length} domains — frontend to deployment.
           </p>
         </div>
       </section>
 
-      <div className="h-px bg-border" />
-
-      {/* ── TECH GRID ────────────────────────────────────────────────────────── */}
-      <section
-        ref={gridSection.ref}
-        className="py-16 container mx-auto px-6"
-      >
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {TECH_CATEGORIES.map((cat, i) => (
-            <div
-              key={cat.id}
-              className={`card-lift bg-bg-card rounded-2xl p-7 border border-border shadow-sm flex flex-col gap-5 ${gridSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-              style={{
-                borderTop: `4px solid rgba(${cat.accentRgb},0.85)`,
-                animationDelay: gridSection.inView ? `${i * 75}ms` : "0ms",
-              }}
-            >
-              {/* category header */}
-              <div className="flex items-center gap-3">
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl shrink-0"
-                  style={{ background: `rgba(${cat.accentRgb},0.1)` }}
-                >
-                  {cat.emoji}
-                </div>
-                <div>
-                  <span
-                    className="font-bold text-sm uppercase tracking-widest block"
-                    style={{ color: `rgba(${cat.accentRgb},1)` }}
-                  >
-                    {cat.label}
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs text-text-secondary leading-relaxed">
-                {cat.description}
-              </p>
-
-              <div className="flex flex-wrap gap-2">
-                {cat.techs.map((t) => (
-                  <span
-                    key={t}
-                    className="text-xs px-3 py-1 rounded-full font-medium transition-all hover:-translate-y-0.5"
-                    style={{
-                      background: `rgba(${cat.accentRgb},0.07)`,
-                      color: `rgba(${cat.accentRgb},1)`,
-                      border: `1px solid rgba(${cat.accentRgb},0.18)`,
-                    }}
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
-            </div>
-          ))}
+      {/* ── Bento grid ── */}
+      <section className="pb-32 relative">
+        <div
+          className="absolute right-0 top-1/3 w-80 h-80 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%)", filter: "blur(90px)" }}
+        />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {TECH_CATEGORIES.map((cat, i) => (
+              <CategoryCard key={cat.id} cat={cat} index={i} />
+            ))}
+          </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

@@ -1,306 +1,284 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useInView } from "../../hooks/useInView";
-import { GlowOrb } from "../../components/GlowOrb";
-import { SectionBadge } from "../../components/SectionBadge";
 import { useParallax } from "../../hooks/useParallax";
-import {
-  PROJECTS,
-  SHOPIFY_STORES,
-  PARTICLES,
-  PARTICLE_COLORS,
-  GHOST_WORDS,
-  GHOST_CONFIG,
-  type Project,
-} from "../../animations/portfolio.data";
+import { PROJECTS, SHOPIFY_STORES, type Project, type ShopifyStore } from "../../animations/portfolio.data";
 
-type Filter = "all" | "fullstack" | "shopify" | "freelance";
+// ── Screenshot Project Card ───────────────────────────────────────────────────
+function IframeCard({ p, index }: { p: Project; index: number }) {
+  const { ref, inView } = useInView(0.08);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [hovered, setHovered] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const accent = `rgb(${p.accent})`;
+  const screenshotUrl = `https://s0.wp.com/mshots/v1/${encodeURIComponent(p.url)}?w=1200&h=750`;
 
-const FILTER_LABELS: Record<Filter, string> = {
-  all: "All",
-  fullstack: "Full-Stack",
-  shopify: "Shopify",
-  freelance: "Freelance",
-};
-
-export default function ProjectsPage() {
-  const scrollY = useParallax();
-  const heroSection = useInView();
-  const projectsSection = useInView();
-  const shopifySection = useInView();
-  const [filter, setFilter] = useState<Filter>("all");
-
-  const filtered: Project[] =
-    filter === "all"
-      ? PROJECTS
-      : PROJECTS.filter((p) => p.category === filter);
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
+    const y = -((e.clientX - rect.left) / rect.width - 0.5) * 10;
+    setTilt({ x, y });
+  }
 
   return (
-    <div className="flex flex-col bg-bg overflow-hidden">
-      {/* ── HERO ─────────────────────────────────────────────────────────────── */}
-      <section
-        ref={heroSection.ref}
-        className="relative flex flex-col items-center text-center overflow-hidden py-20"
+    <div
+      ref={ref}
+      className={`${inView ? "animate-fade-in-up" : "opacity-0"}`}
+      style={{ animationDelay: `${index * 120}ms` }}
+    >
+      <div
+        ref={cardRef}
+        className="group rounded-2xl overflow-hidden border border-[rgba(255,255,255,0.07)] bg-[#0f0f1a] transition-all duration-300 cursor-pointer"
+        style={{
+          transform: hovered
+            ? `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(8px)`
+            : "perspective(1000px) rotateX(0deg) rotateY(0deg)",
+          transition: hovered ? "transform 0.1s ease" : "transform 0.4s ease",
+          boxShadow: hovered ? `0 24px 60px rgba(0,0,0,0.6), 0 0 40px rgba(${p.accent},0.15)` : "none",
+          borderColor: hovered ? `rgba(${p.accent},0.4)` : undefined,
+        }}
+        onMouseMove={handleMouseMove}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => { setHovered(false); setTilt({ x: 0, y: 0 }); }}
       >
-        <div
-          className="absolute inset-0 pointer-events-none opacity-30"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
-            backgroundSize: "28px 28px",
-          }}
-        />
+        {/* Accent top line */}
+        <div className="h-0.5" style={{ background: `linear-gradient(90deg, ${accent}, rgba(${p.accent},0.3), transparent)` }} />
 
-        {GHOST_WORDS.map((word, i) => {
-          const cfg = GHOST_CONFIG[i]!;
-          return (
-            <div
-              key={word}
-              className="absolute pointer-events-none select-none"
-              style={{
-                fontSize: "clamp(40px,7vw,108px)",
-                fontWeight: 900,
-                fontFamily: "var(--font-serif)",
-                color: "transparent",
-                WebkitTextStroke: "1.5px rgba(26,35,50,0.042)",
-                whiteSpace: "nowrap",
-                left: cfg.left,
-                top: cfg.top,
-                zIndex: 1,
-                transform: `translateY(${scrollY * cfg.pSpeed}px)`,
-                animation: `floatY ${8 + i * 1.6}s ease-in-out ${i * 0.9}s infinite${cfg.reverse ? " reverse" : ""}`,
-              }}
-            >
-              {word}
+        {/* Screenshot preview */}
+        <div className="relative w-full overflow-hidden bg-[#08080f]" style={{ height: "220px" }}>
+          {/* Loading skeleton */}
+          {!imgLoaded && !imgError && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 rounded-full border-2 border-[rgba(0,212,255,0.3)] border-t-[#00d4ff] animate-spin" />
+                <span className="text-xs text-[#4a5568]">Loading preview…</span>
+              </div>
             </div>
-          );
-        })}
-
-        <div
-          className="absolute inset-0 overflow-hidden pointer-events-none"
-          style={{ zIndex: 3 }}
-        >
-          {PARTICLES.map((p) => (
-            <div
-              key={p.id}
-              className="absolute rounded-full"
-              style={{
-                width: p.size,
-                height: p.size,
-                left: p.left,
-                bottom: "-8px",
-                background: PARTICLE_COLORS[p.colorIdx],
-                animation: `particleRise ${p.duration} ${p.delay} ease-in-out infinite`,
-                filter: "blur(0.4px)",
-              }}
-            />
-          ))}
-        </div>
-
-        <GlowOrb
-          color="accent"
-          size={700}
-          opacity={0.2}
-          blur={2}
-          className="animate-orb-pulse"
-          style={{ top: -220, left: -180, zIndex: 1 }}
-        />
-        <GlowOrb
-          color="warning"
-          size={450}
-          opacity={0.15}
-          style={{
-            bottom: -100,
-            right: -80,
-            zIndex: 1,
-            animation: "floatY 10s ease-in-out 1s infinite reverse",
-          }}
-        />
-
-        <div className="container relative z-10 max-w-3xl mx-auto px-6">
-          <SectionBadge
-            icon="globe"
-            color="warning"
-            className={`mb-8 ${heroSection.inView ? "animate-fade-in" : "opacity-0"}`}
-          >
-            Portfolio
-          </SectionBadge>
-          <h1
-            className={`font-serif text-4xl md:text-5xl mb-5 ${heroSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-            style={{ animationDelay: "80ms" }}
-          >
-            Projects I've shipped
-          </h1>
-          <p
-            className={`text-base md:text-lg leading-relaxed text-text-secondary ${heroSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-            style={{ animationDelay: "200ms" }}
-          >
-            Live production applications across full-stack platforms, Shopify
-            storefronts, and freelance engagements.
-          </p>
-        </div>
-      </section>
-
-      <div className="h-px bg-border" />
-
-      {/* ── FILTER TABS ──────────────────────────────────────────────────────── */}
-      <div className="py-6 container mx-auto px-6">
-        <div className="flex flex-wrap gap-2 justify-center">
-          {(Object.keys(FILTER_LABELS) as Filter[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className="px-5 py-2 rounded-full text-sm font-semibold transition-all hover:-translate-y-0.5"
-              style={
-                filter === f
-                  ? {
-                      background: "var(--color-primary)",
-                      color: "white",
-                      border: "1.5px solid transparent",
-                    }
-                  : {
-                      background: "transparent",
-                      color: "var(--color-text-secondary)",
-                      border: "1.5px solid var(--color-border)",
-                    }
-              }
+          )}
+          {/* Fallback when screenshot fails */}
+          {imgError && (
+            <div className="absolute inset-0 flex items-center justify-center"
+              style={{ background: `radial-gradient(ellipse at 50% 50%, rgba(${p.accent},0.08) 0%, transparent 70%)` }}>
+              <span className="text-[#4a5568] text-sm">{p.name}</span>
+            </div>
+          )}
+          <img
+            src={screenshotUrl}
+            alt={`${p.name} preview`}
+            className={`w-full h-full object-cover object-top transition-opacity duration-500 ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+            loading="lazy"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => { setImgError(true); setImgLoaded(true); }}
+          />
+          {/* Overlay with visit button on hover */}
+          <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${hovered ? "opacity-100" : "opacity-0"}`}
+            style={{ background: "rgba(6,6,14,0.7)", backdropFilter: "blur(2px)" }}>
+            <a
+              href={p.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-[#06060e] bg-[#00d4ff] no-underline text-sm hover:bg-[#00eeff] transition-colors"
+              style={{ boxShadow: "0 0 24px rgba(0,212,255,0.5)" }}
+              onClick={(e) => e.stopPropagation()}
             >
-              {FILTER_LABELS[f]}
-            </button>
-          ))}
+              Open Live Site →
+            </a>
+          </div>
+        </div>
+
+        {/* Info */}
+        <div className="p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-lg font-bold text-[#e8eaf6] group-hover:text-[#00d4ff] transition-colors">{p.name}</h3>
+            <span className="text-xs px-2.5 py-1 rounded-full font-medium"
+              style={{ background: `rgba(${p.accent},0.12)`, color: accent }}>
+              {p.category === "fullstack" ? "Full-Stack" : p.category === "shopify" ? "Shopify" : "Freelance"}
+            </span>
+          </div>
+          <p className="text-sm text-[#8892b0] leading-relaxed mb-4 line-clamp-2">{p.description}</p>
+          <div className="flex flex-wrap gap-1.5">
+            {p.tags.slice(0, 5).map((t) => (
+              <span key={t} className="text-[10px] px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.05)] text-[#4a5568] font-mono">{t}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Shopify Store Card ────────────────────────────────────────────────────────
+function StoreCard({ s, index }: { s: ShopifyStore; index: number }) {
+  const { ref, inView } = useInView(0.08);
+  const colors = ["#00d4ff", "#a855f7", "#00ff88", "#ffd700", "#ff6b6b", "#00d4ff", "#a855f7", "#00ff88"];
+  const c = colors[index % colors.length]!;
+  const newLocal = "w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0";
+  return (
+    <a
+      ref={ref}
+      href={s.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={`group relative flex items-center gap-4 p-4 rounded-xl border border-[rgba(255,255,255,0.07)] bg-[#0f0f1a] no-underline hover:border-[rgba(0,212,255,0.3)] hover:-translate-y-1 transition-all duration-200 ${
+        inView ? "animate-fade-in-up" : "opacity-0"
+      }`}
+      style={{ animationDelay: `${index * 60}ms` }}
+    >
+      {/* Tooltip */}
+      <div className="pointer-events-none absolute -top-11 left-1/2 -translate-x-1/2 z-30 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        <div className="px-3 py-1.5 rounded-lg bg-[#12121e] border border-[rgba(168,85,247,0.45)] text-xs text-[#e8eaf6] whitespace-nowrap shadow-lg shadow-black/50">
+          Enter password{" "}
+          <span className="font-mono text-[#a855f7]">"demo"</span>
+          {" "}if required
+        </div>
+        {/* Arrow */}
+        <div className="mx-auto w-fit">
+          <div
+            className="w-0 h-0"
+            style={{
+              borderLeft: "5px solid transparent",
+              borderRight: "5px solid transparent",
+              borderTop: "5px solid rgba(168,85,247,0.45)",
+            }}
+          />
         </div>
       </div>
 
-      {/* ── PROJECTS GRID ────────────────────────────────────────────────────── */}
-      <section
-        ref={projectsSection.ref}
-        className="py-8 pb-16 container mx-auto px-6"
+      <div
+        className={newLocal}
+        style={{ background: `${c}18`, color: c, boxShadow: `0 0 12px ${c}30` }}
       >
-        {filtered.length === 0 ? (
-          <p className="text-center text-text-muted py-16">
-            No projects in this category yet.
+        {s.name[0]}
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-[#e8eaf6] group-hover:text-[#00d4ff] transition-colors truncate">{s.name}</p>
+        <p className="text-[10px] text-[#a855f7]">password: demo</p>
+      </div>
+      <span className="text-[#4a5568] group-hover:text-[#00d4ff] transition-colors text-sm">→</span>
+    </a>
+  );
+}
+
+// ── Filter ────────────────────────────────────────────────────────────────────
+type Filter = "all" | "fullstack" | "shopify" | "freelance";
+const FILTERS: { id: Filter; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "fullstack", label: "Full-Stack" },
+  { id: "shopify", label: "Shopify" },
+  { id: "freelance", label: "Freelance" },
+];
+
+// ── Page ──────────────────────────────────────────────────────────────────────
+export default function ProjectsPage() {
+  const [filter, setFilter] = useState<Filter>("all");
+  const scrollY = useParallax();
+  const filtered = filter === "all" ? PROJECTS : PROJECTS.filter((p) => p.category === filter);
+
+  return (
+    <main>
+      {/* ── Hero ── */}
+      <section className="relative py-24 overflow-hidden">
+   <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)`,
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(ellipse 80% 60% at 50% 30%, black 30%, transparent 100%)",
+      }}
+    />
+        <div
+          className="absolute top-0 left-1/4 w-96 h-96 rounded-full pointer-events-none"
+          style={{
+            background: "radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%)",
+            filter: "blur(80px)",
+            transform: `translateY(${scrollY * 0.08}px)`,
+          }}
+        />
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.05)] text-[#00d4ff] text-xs font-medium mb-8 animate-fade-in">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff]" />
+            Work
+          </div>
+          <h1
+            className="font-serif font-extrabold text-[#e8eaf6] mb-6 animate-fade-in-up"
+            style={{ fontSize: "clamp(2.5rem,6vw,5rem)" }}
+          >
+            Projects & <span className="gradient-text">Stores</span>
+          </h1>
+          <p className="text-[#8892b0] text-lg max-w-lg mx-auto animate-fade-in-up" style={{ animationDelay: "150ms" }}>
+            Live sites, full-stack apps, and Shopify builds — all with real URLs.
           </p>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((project, i) => (
-              <a
-                key={project.name}
-                href={project.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`card-lift bg-bg-card rounded-2xl p-7 border border-border shadow-sm no-underline flex flex-col gap-4 group ${projectsSection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-                style={{
-                  borderTop: `4px solid rgba(${project.accent},0.85)`,
-                  animationDelay: projectsSection.inView
-                    ? `${i * 90}ms`
-                    : "0ms",
-                }}
+        </div>
+      </section>
+
+      {/* ── Filter tabs ── */}
+      <section className="pb-10">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {FILTERS.map((f) => (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id)}
+                className={`px-5 py-2 rounded-xl text-sm font-medium transition-all duration-200 cursor-pointer border ${
+                  filter === f.id
+                    ? "bg-[#00d4ff] text-[#06060e] border-[#00d4ff]"
+                    : "bg-transparent text-[#8892b0] border-[rgba(255,255,255,0.1)] hover:border-[rgba(0,212,255,0.3)] hover:text-[#e8eaf6]"
+                }`}
+                style={filter === f.id ? { boxShadow: "0 0 20px rgba(0,212,255,0.3)" } : {}}
               >
-                <div className="flex items-start justify-between gap-2">
-                  <h3
-                    className="font-bold text-xl group-hover:opacity-80 transition-opacity"
-                    style={{ color: `rgba(${project.accent},1)` }}
-                  >
-                    {project.name}
-                  </h3>
-                  <span
-                    className="text-xs px-2.5 py-0.5 rounded-full font-semibold shrink-0 mt-1"
-                    style={{
-                      background: `rgba(${project.accent},0.1)`,
-                      color: `rgba(${project.accent},1)`,
-                      border: `1px solid rgba(${project.accent},0.22)`,
-                    }}
-                  >
-                    {project.category === "shopify"
-                      ? "Shopify"
-                      : project.category === "freelance"
-                        ? "Freelance"
-                        : "Full-Stack"}
-                  </span>
-                </div>
-
-                <p className="text-sm text-text-secondary leading-relaxed flex-1">
-                  {project.description}
-                </p>
-
-                <div className="flex flex-wrap gap-1.5">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-xs px-2 py-0.5 rounded-md font-medium text-text-muted"
-                      style={{ background: "var(--color-bg-muted)" }}
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-
-                <div
-                  className="text-xs font-semibold mt-auto pt-2 border-t border-border"
-                  style={{ color: `rgba(${project.accent},0.9)` }}
-                >
-                  {project.url.replace("https://", "")} →
-                </div>
-              </a>
+                {f.label}
+                <span className="ml-2 text-xs opacity-60">
+                  {f.id === "all" ? PROJECTS.length : PROJECTS.filter((p) => p.category === f.id).length}
+                </span>
+              </button>
             ))}
           </div>
-        )}
+        </div>
       </section>
 
-      <div className="h-px bg-border" />
+      {/* ── Projects grid with iframe previews ── */}
+      <section className="pb-24 relative">
+        <div className="container mx-auto px-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filtered.map((p, i) => (
+              <IframeCard key={p.name} p={p} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
 
-      {/* ── SHOPIFY STORES ───────────────────────────────────────────────────── */}
-      <section
-        ref={shopifySection.ref}
-        className="py-16 container mx-auto px-6"
-      >
+      {/* ── Divider ── */}
+      <div className="container mx-auto px-4">
+        <div className="h-px bg-gradient-to-r from-transparent via-[rgba(0,212,255,0.2)] to-transparent mb-24" />
+      </div>
+
+      {/* ── Shopify stores ── */}
+      <section className="pb-32 relative">
         <div
-          className={`text-center mb-12 ${shopifySection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-        >
-          <SectionBadge color="warning" className="mb-6">
-            🛍️ Shopify Stores
-          </SectionBadge>
-          <h2 className="font-serif text-3xl md:text-4xl mb-4">
-            Shopify storefronts I've built
-          </h2>
-          <p className="text-base max-w-xl mx-auto text-text-secondary">
-            Custom Hydrogen/Oxygen deployments, Liquid themes, Metaobjects, and 3D
-            product experiences for brands across fitness, sport, and lifestyle.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {SHOPIFY_STORES.map((store, i) => (
-            <a
-              key={store.name}
-              href={store.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`card-lift bg-bg-card rounded-xl p-5 border border-border shadow-sm no-underline flex flex-col gap-2 group text-center ${shopifySection.inView ? "animate-fade-in-up" : "opacity-0"}`}
-              style={{
-                borderTop: "3px solid rgba(212,168,67,0.8)",
-                animationDelay: shopifySection.inView ? `${i * 70}ms` : "0ms",
-              }}
-            >
-              <span className="font-bold text-base group-hover:opacity-80 transition-opacity" style={{ color: "rgba(212,168,67,1)" }}>
-                {store.name}
-              </span>
-              <span
-                className="text-xs px-2 py-0.5 rounded-full font-medium"
-                style={{
-                  background: "rgba(212,168,67,0.1)",
-                  color: "rgba(212,168,67,0.9)",
-                  border: "1px solid rgba(212,168,67,0.2)",
-                }}
-              >
-                {store.niche}
-              </span>
-              <span className="text-xs text-text-muted mt-1 truncate">
-                {store.url.replace("https://", "")} →
-              </span>
-            </a>
-          ))}
+          className="absolute right-0 top-0 w-72 h-72 rounded-full pointer-events-none"
+          style={{ background: "radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)", filter: "blur(80px)" }}
+        />
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center mb-14 space-y-4">
+            <span className="text-xs text-[#a855f7] uppercase tracking-[0.2em] font-medium">Shopify</span>
+            <h2 className="text-3xl md:text-4xl font-extrabold font-serif text-[#e8eaf6] mt-3">
+              Store Portfolio
+            </h2>
+            <p className="text-[#8892b0] mt-3 max-w-sm mx-auto text-sm">
+              8 live Shopify stores built with Hydrogen, Oxygen, and Liquid — click any to visit.
+            </p>
+            <p className="mx-auto text-center text-2xl md:hidden"> Enter <span className="font-mono text-[#a855f7]">demo</span> to access the store.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
+            {SHOPIFY_STORES.map((s, i) => (
+              <StoreCard key={s.name} s={s} index={i} />
+            ))}
+          </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

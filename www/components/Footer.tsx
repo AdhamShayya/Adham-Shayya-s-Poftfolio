@@ -1,102 +1,81 @@
 import { Link } from "react-router";
 
-const FOOTER_LINKS = [
-  { label: "Home", to: "/" },
-  { label: "Skills", to: "/features" },
-  { label: "Projects", to: "/projects" },
-  { label: "About", to: "/about" },
-  { label: "Contact", to: "/contact" },
+const NAV = [
+  { label: "Home", href: "/" },
+  { label: "Skills", href: "/features" },
+  { label: "Projects", href: "/projects" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
 ];
 
-const EXTERNAL_LINKS = [
-  { label: "GitHub", href: "https://github.com/adhamshayya" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/adham-shayya" },
+const SOCIALS = [
+  { label: "GitHub", href: "https://github.com/AdhamShayya" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/adham-shayya-a38806289" },
   { label: "Email", href: "mailto:adhamshayya123@gmail.com" },
 ];
 
-function Footer() {
+export default function Footer() {
   return (
-    <footer
-      className="py-10 mt-auto"
-      style={{ borderTop: "1px solid var(--color-border)" }}
-    >
-      <div className="container mx-auto px-6">
-        {/* top row */}
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-8 mb-8">
-          {/* brand */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold font-serif text-sm"
-                style={{ background: "var(--color-primary)" }}
-              >
-                A
-              </div>
-              <span className="font-bold text-base tracking-tight">
-                Adham
-                <span style={{ color: "var(--color-info)" }}>.dev</span>
+    <footer className="relative border-t border-[rgba(0,212,255,0.1)] bg-[#06060e] overflow-hidden">
+      {/* Top accent line */}
+      <div className="h-px bg-gradient-to-r from-transparent via-[#00d4ff] to-transparent opacity-40" />
+
+      {/* Background glow */}
+      <div
+        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-96 h-48 rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%)", filter: "blur(60px)" }}
+      />
+
+      <div className="container mx-auto px-4 py-14 relative z-10">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+          {/* Brand */}
+          <div className="text-center md:text-left">
+            <Link to="/" className="no-underline inline-block mb-3">
+              <span className="font-serif font-extrabold text-2xl text-[#e8eaf6]">
+                Adham<span className="text-[#00d4ff]">.</span><span className="text-[#a855f7]">dev</span>
               </span>
-            </div>
-            <p
-              className="text-xs leading-relaxed max-w-xs"
-              style={{ color: "var(--color-text-secondary)" }}
-            >
-              Full-Stack Developer · Beirut, Lebanon.
-              Building high-performance web experiences.
+            </Link>
+            <p className="text-xs text-[#4a5568] max-w-xs">
+              Full-Stack Developer & Shopify Expert · Beirut, Lebanon
             </p>
           </div>
 
-          {/* nav links */}
-          <div className="flex flex-wrap gap-x-8 gap-y-3">
-            {FOOTER_LINKS.map((l) => (
+          {/* Nav */}
+          <nav className="flex flex-wrap justify-center gap-5">
+            {NAV.map((l) => (
               <Link
-                key={l.to}
-                to={l.to}
-                className="text-xs font-medium transition-colors no-underline hover:underline"
-                style={{ color: "var(--color-text-secondary)" }}
+                key={l.href}
+                to={l.href}
+                className="text-sm text-[#4a5568] hover:text-[#00d4ff] transition-colors no-underline"
               >
                 {l.label}
               </Link>
             ))}
-          </div>
+          </nav>
 
-          {/* external links */}
-          <div className="flex flex-wrap gap-3">
-            {EXTERNAL_LINKS.map((l) => (
+          {/* Socials */}
+          <div className="flex items-center gap-3">
+            {SOCIALS.map((s) => (
               <a
-                key={l.label}
-                href={l.href}
+                key={s.label}
+                href={s.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs font-semibold px-3.5 py-1.5 rounded-full no-underline transition-all hover:-translate-y-0.5"
-                style={{
-                  color: "var(--color-info)",
-                  background: "rgba(74,127,165,0.09)",
-                  border: "1px solid rgba(74,127,165,0.18)",
-                }}
+                aria-label={s.label}
+                className="rounded-xl border border-[rgba(255,255,255,0.08)] bg-[#0f0f1a] flex items-center justify-center text-base hover:border-[rgba(0,212,255,0.4)] hover:bg-[rgba(0,212,255,0.06)] transition-all no-underline px-4"
               >
-                {l.label}
+                {s.label}
               </a>
             ))}
           </div>
         </div>
 
-        {/* bottom rule */}
-        <div
-          className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-3"
-          style={{ borderTop: "1px solid var(--color-border)" }}
-        >
-          <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-            © {new Date().getFullYear()} Adham Shayya. All rights reserved.
-          </p>
-          <p className="text-xs" style={{ color: "var(--color-text-muted)" }}>
-            +961 81 982 020 · adhamshayya123@gmail.com
-          </p>
+        {/* Bottom row */}
+        <div className="mt-10 pt-6 border-t border-[rgba(255,255,255,0.04)] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#4a5568]">
+          <span>© {new Date().getFullYear()} Adham Shayya. All rights reserved.</span>
+          <span>Built with React · TypeScript · Vite</span>
         </div>
       </div>
     </footer>
   );
 }
-
-export default Footer;
-

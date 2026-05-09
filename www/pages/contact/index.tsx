@@ -1,129 +1,187 @@
-﻿import React, { useState } from "react";
+import { useState, useRef } from "react";
 import { useInView } from "../../hooks/useInView";
-import { GlowOrb } from "../../components/GlowOrb";
-import { SectionBadge } from "../../components/SectionBadge";
+import { useParallax } from "../../hooks/useParallax";
+
+function GridBg() {
+  return (
+    <div
+      className="absolute inset-0 pointer-events-none"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px)`,
+        backgroundSize: "60px 60px",
+        maskImage: "radial-gradient(ellipse 80% 60% at 50% 30%, black 20%, transparent 100%)",
+      }}
+    />
+  );
+}
 
 const CONTACT_INFO = [
-  { label: "Email", value: "adhamshayya123@gmail.com", href: "mailto:adhamshayya123@gmail.com" },
-  { label: "Phone", value: "+961 81 982 020", href: "tel:+96181982020" },
-  { label: "LinkedIn", value: "linkedin.com/in/adham-shayya", href: "https://www.linkedin.com/in/adham-shayya" },
-  { label: "GitHub", value: "github.com/adhamshayya", href: "https://github.com/adhamshayya" },
+  { icon: "✉", label: "Email", value: "adhamshayya123@gmail.com", href: "mailto:adhamshayya123@gmail.com", color: "#00d4ff" },
+  { icon: "📞", label: "Phone", value: "+961 81 982 020", href: "tel:+96181982020", color: "#a855f7" },
+  { icon: "💼", label: "LinkedIn", value: "https://www.linkedin.com/in/adham-shayya-a38806289/", href: "https://www.linkedin.com/in/adham-shayya-a38806289/", color: "#00ff88" },
+  { icon: "🐙", label: "GitHub", value: "github.com/adhamshayya", href: "https://github.com/AdhamShayya", color: "#ffd700" },
 ];
 
 export default function ContactPage() {
-  const [submitted, setSubmitted] = useState(false);
+  const scrollY = useParallax();
+  const { ref: formRef, inView: formInView } = useInView(0.1);
+  const [sent, setSent] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
-  const formSection = useInView();
-  const infoSection = useInView();
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitted(true);
+    const { name, email, subject, message } = form;
+    const mailto = `mailto:adhamshayya123@gmail.com?subject=${encodeURIComponent(subject || "Portfolio Contact")}&body=${encodeURIComponent(`From: ${name} <${email}>\n\n${message}`)}`;
+    window.open(mailto, "_blank");
+    setSent(true);
   }
 
-  const inputStyle: React.CSSProperties = {
-    width: "100%",
-    background: "var(--color-bg)",
-    border: "1.5px solid var(--color-border)",
-    borderRadius: "0.625rem",
-    padding: "0.8rem 1rem",
-    fontSize: "0.875rem",
-    color: "var(--color-text)",
-    outline: "none",
-    transition: "border-color 0.15s",
-  };
-
   return (
-    <div className="bg-bg">
-      {/* ── HERO ──────────────────────────────────────────────────────────────── */}
-      <section className="relative py-20 flex flex-col items-center text-center overflow-hidden">
-        <GlowOrb color="accent" size={600} opacity={0.2} blur={2}
-          className="animate-orb-pulse"
-          style={{ top: -200, left: -150, zIndex: 1 }}
-        />
-        <GlowOrb color="info" size={380} opacity={0.16}
-          style={{ bottom: -80, right: -80, zIndex: 1 }}
-          animation="floatY 9s ease-in-out 1.5s infinite reverse"
-        />
+    <main>
+      {/* ── Hero ── */}
+      <section className="relative py-24 overflow-hidden">
+        <GridBg />
         <div
-          className="absolute inset-0 pointer-events-none opacity-25"
+          className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full pointer-events-none"
           style={{
-            backgroundImage: "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
+            background: "radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%)",
+            filter: "blur(100px)",
+            transform: `translateY(${scrollY * 0.06}px)`,
           }}
         />
-        <div className="container relative z-10 max-w-2xl mx-auto px-6">
-          <SectionBadge icon="send" color="info" className="mb-8 animate-fade-in">
-            Contact
-          </SectionBadge>
-          <h1 className="font-serif text-4xl md:text-5xl mb-5 animate-fade-in-up" style={{ animationDelay: "80ms" }}>
-            Let us build something together
+        <div className="container mx-auto px-4 relative z-10 text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,212,255,0.3)] bg-[rgba(0,212,255,0.06)] text-[#00d4ff] text-xs font-medium mb-8 animate-fade-in">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-pulse" />
+            Available Now
+          </div>
+          <h1
+            className="font-serif font-extrabold text-[#e8eaf6] mb-6 animate-fade-in-up"
+            style={{ fontSize: "clamp(2.5rem,6vw,5rem)" }}
+          >
+            Let's <span className="gradient-text">Connect</span>
           </h1>
-          <p className="text-base md:text-lg leading-relaxed text-text-secondary animate-fade-in-up" style={{ animationDelay: "200ms" }}>
-            Have a project in mind or want to explore working together? Send me
-            a message and I will get back to you shortly.
+          <p className="text-[#8892b0] text-lg max-w-lg mx-auto animate-fade-in-up" style={{ animationDelay: "150ms" }}>
+            Have a project in mind or just want to say hi? I'm always open to new opportunities.
           </p>
         </div>
       </section>
 
-      <div className="h-px bg-border" />
-
-      {/* ── FORM + INFO ───────────────────────────────────────────────────────── */}
-      <div className="container mx-auto px-6 py-16 max-w-5xl grid  gap-12 items-start">
-        {/* Left: info column */}
-        <div
-          ref={infoSection.ref}
-          className={`md:col-span-2 flex flex-col gap-8 ${infoSection.inView ? "animate-slide-in-left" : "opacity-0"}`}
-        >
-          <div>
-            <SectionBadge color="accent" icon="user" className="mb-5">
-              Adham Shayya
-            </SectionBadge>
-            <p className="text-sm text-text-secondary leading-relaxed">
-              Full-Stack Developer · Beirut, Lebanon.
-              Available for freelance projects, full-time roles, and consulting.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            {CONTACT_INFO.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex flex-col gap-0.5 p-4 rounded-xl border border-border bg-bg-card card-lift no-underline group"
-              >
-                <span className="text-xs font-semibold uppercase tracking-widest text-text-muted">
-                  {item.label}
-                </span>
-                <span
-                  className="text-sm font-medium group-hover:opacity-80 transition-opacity"
-                  style={{ color: "var(--color-info)" }}
+      {/* ── Main content ── */}
+      <section className="pb-32 relative">
+        <div className="container mx-auto px-4">
+          <div className="grid lg:grid-cols-5 gap-10 max-w-5xl mx-auto">
+            {/* Left: contact cards */}
+            <div className="lg:col-span-2 space-y-4">
+              {CONTACT_INFO.map((c, i) => (
+                <a
+                  key={c.label}
+                  href={c.href}
+                  target={c.href.startsWith("http") ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className={`group flex items-center gap-4 p-4 rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[#0f0f1a] no-underline hover:border-[rgba(0,212,255,0.3)] hover:-translate-y-1 transition-all duration-200 animate-fade-in-up`}
+                  style={{ animationDelay: `${i * 80}ms` }}
                 >
-                  {item.value}
-                </span>
-              </a>
-            ))}
-          </div>
+                  <div
+                    className="w-11 h-11 rounded-xl flex items-center justify-center text-lg flex-shrink-0"
+                    style={{ background: `${c.color}15`, boxShadow: `0 0 12px ${c.color}25` }}
+                  >
+                    {c.icon}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-xs text-[#4a5568] uppercase tracking-widest mb-0.5">{c.label}</p>
+                    <p className="text-sm text-[#e8eaf6] font-medium truncate group-hover:text-[#00d4ff] transition-colors">{c.value}</p>
+                  </div>
+                  <span className="ml-auto text-[#4a5568] group-hover:text-[#00d4ff] transition-colors flex-shrink-0">→</span>
+                </a>
+              ))}
 
-          <div
-            className="rounded-xl p-5 border border-border bg-bg-card"
-            style={{ borderLeft: "4px solid rgba(139,158,108,0.8)" }}
-          >
-            <p className="text-sm font-semibold mb-1">Response time</p>
-            <p className="text-xs text-text-secondary leading-relaxed">
-              I typically respond within 24 hours. For urgent matters,
-              reach out by phone or LinkedIn.
-            </p>
+              {/* Availability card */}
+              <div className="mt-6 p-5 rounded-2xl border border-[rgba(0,255,136,0.2)] bg-[rgba(0,255,136,0.04)]">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse" />
+                  <span className="text-xs text-[#00ff88] font-medium uppercase tracking-widest">Open to work</span>
+                </div>
+                <p className="text-sm text-[#8892b0]">Available for full-time roles, freelance projects, and interesting collaborations.</p>
+              </div>
+            </div>
+
+            {/* Right: form */}
+            <div
+              ref={formRef}
+              className={`lg:col-span-3 rounded-2xl border border-[rgba(255,255,255,0.07)] bg-[#0f0f1a] p-8 ${formInView ? "animate-fade-in-up" : "opacity-0"}`}
+            >
+              {sent ? (
+                <div className="flex flex-col items-center justify-center h-full py-16 text-center">
+                  <div
+                    className="w-16 h-16 rounded-full flex items-center justify-center text-2xl mb-4"
+                    style={{ background: "rgba(0,212,255,0.1)", boxShadow: "0 0 24px rgba(0,212,255,0.3)" }}
+                  >
+                    ✉
+                  </div>
+                  <h3 className="text-xl font-bold text-[#e8eaf6] mb-2">Message sent!</h3>
+                  <p className="text-[#8892b0] text-sm">Your email client should have opened. I'll get back to you soon.</p>
+                  <button
+                    onClick={() => setSent(false)}
+                    className="mt-6 px-6 py-2 rounded-xl border border-[rgba(0,212,255,0.3)] text-[#00d4ff] text-sm hover:bg-[rgba(0,212,255,0.06)] transition-colors cursor-pointer bg-transparent"
+                  >
+                    Send another
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <h2 className="text-xl font-bold text-[#e8eaf6] mb-6">Send a message</h2>
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    {[
+                      { key: "name", label: "Name", type: "text", placeholder: "Your name" },
+                      { key: "email", label: "Email", type: "email", placeholder: "your@email.com" },
+                    ].map((field) => (
+                      <div key={field.key}>
+                        <label className="block text-xs text-[#4a5568] uppercase tracking-widest mb-2">{field.label}</label>
+                        <input
+                          type={field.type}
+                          required
+                          placeholder={field.placeholder}
+                          value={form[field.key as keyof typeof form]}
+                          onChange={(e) => setForm((f) => ({ ...f, [field.key]: e.target.value }))}
+                          className="w-full px-4 py-3 rounded-xl bg-[#161625] border border-[rgba(255,255,255,0.08)] text-[#e8eaf6] text-sm placeholder-[#4a5568] outline-none focus:border-[rgba(0,212,255,0.4)] transition-colors"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[#4a5568] uppercase tracking-widest mb-2">Subject</label>
+                    <input
+                      type="text"
+                      placeholder="What's this about?"
+                      value={form.subject}
+                      onChange={(e) => setForm((f) => ({ ...f, subject: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl bg-[#161625] border border-[rgba(255,255,255,0.08)] text-[#e8eaf6] text-sm placeholder-[#4a5568] outline-none focus:border-[rgba(0,212,255,0.4)] transition-colors"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-[#4a5568] uppercase tracking-widest mb-2">Message</label>
+                    <textarea
+                      required
+                      rows={5}
+                      placeholder="Tell me about your project…"
+                      value={form.message}
+                      onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
+                      className="w-full px-4 py-3 rounded-xl bg-[#161625] border border-[rgba(255,255,255,0.08)] text-[#e8eaf6] text-sm placeholder-[#4a5568] outline-none focus:border-[rgba(0,212,255,0.4)] transition-colors resize-none"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-3.5 rounded-xl font-bold text-[#06060e] bg-[#00d4ff] hover:bg-[#00eeff] transition-all text-sm cursor-pointer border-0"
+                    style={{ boxShadow: "0 0 24px rgba(0,212,255,0.35)" }}
+                  >
+                    Send Message →
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
-
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }

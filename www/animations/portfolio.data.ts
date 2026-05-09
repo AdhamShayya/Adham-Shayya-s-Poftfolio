@@ -1,5 +1,4 @@
 // ─── Portfolio data ───────────────────────────────────────────────────────────
-
 export const HERO_TAGLINES = [
   "Full-Stack Developer",
   "Shopify Expert",
@@ -65,6 +64,14 @@ export const TECH_CATEGORIES: TechCategory[] = [
     description: "WebGL-powered 3D/2D graphics and canvas manipulation without plugins",
     techs: ["Three.js", "Fabric.js", "WebGL", "Canvas API"],
   },
+   {
+    id: "orm-query",
+    label: "ORM & Query",
+    emoji: "🗄️",
+    accentRgb: "212,168,67",
+    description: "Type-safe database access, query building and performance tuning",
+    techs: ["TypeORM", "Sequelize", "Kysely", "GroupBy", "SQL", "NoSQL"],
+  },
   {
     id: "backend",
     label: "Backend",
@@ -76,22 +83,6 @@ export const TECH_CATEGORIES: TechCategory[] = [
       "JWT", "MVC", "Job Queues", "Event Listeners", "SWC/core",
       "Middleware", "REST APIs",
     ],
-  },
-  {
-    id: "orm-query",
-    label: "ORM & Query",
-    emoji: "🗄️",
-    accentRgb: "212,168,67",
-    description: "Type-safe database access, query building and performance tuning",
-    techs: ["TypeORM", "Sequelize", "Kysely", "GroupBy", "SQL", "NoSQL"],
-  },
-  {
-    id: "databases",
-    label: "Databases",
-    emoji: "💾",
-    accentRgb: "74,127,165",
-    description: "Relational and NoSQL databases hosted across modern platforms",
-    techs: ["PostgreSQL (Neon)", "MySQL", "MongoDB", "NoSQL", "Redis"],
   },
   {
     id: "image",
@@ -106,6 +97,15 @@ export const TECH_CATEGORIES: TechCategory[] = [
     ],
   },
   {
+    id: "databases",
+    label: "Databases",
+    emoji: "💾",
+    accentRgb: "74,127,165",
+    description: "Relational and NoSQL databases hosted across modern platforms",
+    techs: ["PostgreSQL (Neon)", "MySQL", "MongoDB", "NoSQL", "Redis"],
+  },
+ 
+  {
     id: "shopify",
     label: "Shopify",
     emoji: "🛍️",
@@ -117,13 +117,18 @@ export const TECH_CATEGORIES: TechCategory[] = [
     ],
   },
   {
-    id: "testing",
-    label: "Testing",
-    emoji: "🧪",
-    accentRgb: "139,158,108",
-    description: "Automated unit, integration and end-to-end test coverage",
-    techs: ["Jest", "Playwright"],
+    id: "devtools",
+    label: "Dev Tools & Other",
+    emoji: "🔧",
+    accentRgb: "74,127,165",
+    description: "Tooling, integrations and advanced browser APIs",
+    techs: [
+      "Git", "GitHub", "Bitbucket", "Jira", "OpenAI", "Chrome Extensions",
+      "IP Registry", "ResizeObserver", "process.env", "process.argv",
+    ],
   },
+
+
   {
     id: "deployment",
     label: "Deployment & Infra",
@@ -143,16 +148,14 @@ export const TECH_CATEGORIES: TechCategory[] = [
     description: "Cross-platform mobile development",
     techs: ["React Native", "Dart", "Flutter"],
   },
-  {
-    id: "devtools",
-    label: "Dev Tools & Other",
-    emoji: "🔧",
-    accentRgb: "74,127,165",
-    description: "Tooling, integrations and advanced browser APIs",
-    techs: [
-      "Git", "GitHub", "Bitbucket", "Jira", "OpenAI", "Chrome Extensions",
-      "IP Registry", "ResizeObserver", "process.env", "process.argv",
-    ],
+
+    {
+    id: "testing",
+    label: "Testing",
+    emoji: "🧪",
+    accentRgb: "139,158,108",
+    description: "Automated unit, integration and end-to-end test coverage",
+    techs: ["Jest", "Playwright"],
   },
 ];
 
@@ -172,7 +175,7 @@ export const PROJECTS: Project[] = [
     url: "https://brando.no",
     description:
       "Full-stack Norwegian brand platform. Built with React, Node.js and PostgreSQL. Deployed on Fly.io with Cloudflare for asset delivery.",
-    tags: ["React", "Node.js", "PostgreSQL", "Fly.io", "Cloudflare"],
+    tags: ["React", "Node.js", "PostgreSQL", "Cloudflare"],
     category: "fullstack",
     accent: "74,127,165",
   },
@@ -181,7 +184,7 @@ export const PROJECTS: Project[] = [
     url: "https://sainte.fly.dev",
     description:
       "Modern web application with event-driven backend, Kysely-powered database layer and full Playwright test suite.",
-    tags: ["Node.js", "Kysely", "TypeScript", "Playwright", "Fly.io"],
+    tags: ["Node.js", "Kysely", "TypeScript", "Playwright"],
     category: "fullstack",
     accent: "139,158,108",
   },
@@ -195,22 +198,13 @@ export const PROJECTS: Project[] = [
     accent: "212,168,67",
   },
   {
-    name: "BellaBuBear",
-    url: "https://bellabubear.com",
+    name: "AK",
+    url: "https://ak-new.fly.dev",
     description:
-      "Full-stack e-commerce platform with custom checkout flow, image optimisation pipeline and Cloudflare CDN.",
-    tags: ["React", "Node.js", "Sharp", "Cloudflare", "PostgreSQL"],
+      "Furniture showcase platform built with React, Node.js and PostgreSQL. Features smooth animations and a modern storefront experience, deployed on Fly.io.",
+    tags: ["React", "Node.js", "PostgreSQL", "TypeScript"],
     category: "fullstack",
-    accent: "74,127,165",
-  },
-  {
-    name: "Fitt Theme",
-    url: "https://fitttheme.myshopify.com",
-    description:
-      "Proprietary Shopify theme featuring an admin panel for non-developers, 3D product customization (Three.js + Fabric.js) and Liquid sections.",
-    tags: ["Shopify", "Hydrogen", "Three.js", "Fabric.js", "Liquid"],
-    category: "shopify",
-    accent: "139,158,108",
+    accent: "0,212,255",
   },
   {
     name: "Zaher Rumman",
@@ -239,6 +233,7 @@ export const SHOPIFY_STORES: ShopifyStore[] = [
   { name: "Morfactive", url: "https://morfactive.myshopify.com", niche: "Active Lifestyle" },
   { name: "Numuv", url: "https://numuveshop.myshopify.com", niche: "Lifestyle" },
   { name: "WetSkin", url: "https://shopwetskin.myshopify.com", niche: "Skincare" },
+  { name: "Hyparx Fitness", url: "https://hyparxfitness.myshopify.com", niche: "Fitness" },
 ];
 
 // ─── Experience ───────────────────────────────────────────────────────────────
