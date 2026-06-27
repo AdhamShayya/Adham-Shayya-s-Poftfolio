@@ -26,7 +26,7 @@ export default function Footer() {
         style={{ background: "radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%)", filter: "blur(60px)" }}
       />
 
-      <div className="container mx-auto px-4 py-14 relative z-10">
+      <div className="container mx-auto py-14 relative z-10">
         <div className="flex flex-col md:flex-row items-center justify-between gap-10">
           {/* Brand */}
           <div className="text-center md:text-left">

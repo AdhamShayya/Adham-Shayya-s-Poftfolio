@@ -32,7 +32,7 @@ export default function Header() {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 py-2`}
       >
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <div
             className={`flex items-center justify-between px-5 py-3 rounded-2xl transition-all duration-500 bg-[rgba(6,6,14,0.92)] backdrop-blur-xl border border-[rgba(0,212,255,0.15)] shadow-[0_8px_32px_rgba(0,0,0,0.6)]
              

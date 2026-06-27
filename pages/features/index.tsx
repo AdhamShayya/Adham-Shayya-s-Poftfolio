@@ -89,7 +89,7 @@ export default function FeaturesPage() {
             transform: `translateY(${scrollY * 0.06}px)`,
           }}
         />
-        <div className="container mx-auto px-4 relative z-10 text-center">
+        <div className="container mx-auto relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,255,136,0.3)] bg-[rgba(0,255,136,0.06)] text-[#00ff88] text-xs font-medium mb-8 animate-fade-in">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00ff88]" />
             Stack
@@ -113,7 +113,7 @@ export default function FeaturesPage() {
           className="absolute right-0 top-1/3 w-80 h-80 rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%)", filter: "blur(90px)" }}
         />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {TECH_CATEGORIES.map((cat, i) => (
               <CategoryCard key={cat.id} cat={cat} index={i} />

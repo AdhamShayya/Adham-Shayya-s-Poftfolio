@@ -378,7 +378,7 @@ export default function ProjectsPage() {
             transform: `translateY(${scrollY * 0.08}px)`,
           }}
         />
-        <div className="container mx-auto px-4 relative z-10 text-center">
+        <div className="container mx-auto relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.05)] text-[#00d4ff] text-xs font-medium mb-8 animate-fade-in">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff]" />
             Work
@@ -397,7 +397,7 @@ export default function ProjectsPage() {
 
       {/* ── Filter tabs ── */}
       <section className="pb-10">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <div className="flex flex-wrap gap-2 justify-center">
             {FILTERS.map((f) => (
               <button
@@ -422,7 +422,7 @@ export default function ProjectsPage() {
 
       {/* ── Projects grid with iframe previews ── */}
       <section className="pb-24 relative">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map((p, i) => (
               <IframeCard key={p.name} p={p} index={i} />
@@ -432,7 +432,7 @@ export default function ProjectsPage() {
       </section>
 
       {/* ── Divider ── */}
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="h-px bg-gradient-to-r from-transparent via-[rgba(0,212,255,0.2)] to-transparent mb-24" />
       </div>
 
@@ -442,7 +442,7 @@ export default function ProjectsPage() {
           className="absolute right-0 top-0 w-72 h-72 rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(168,85,247,0.1) 0%, transparent 70%)", filter: "blur(80px)" }}
         />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           <div className="text-center mb-14 space-y-4">
             <span className="text-xs text-[#a855f7] uppercase tracking-[0.2em] font-medium">Shopify</span>
             <h2 className="text-3xl md:text-4xl font-extrabold font-serif text-[#e8eaf6] mt-3">
@@ -462,7 +462,7 @@ export default function ProjectsPage() {
       </section>
 
       {/* ── Divider ── */}
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="h-px bg-gradient-to-r from-transparent via-[rgba(168,85,247,0.2)] to-transparent mb-24" />
       </div>
 
@@ -476,7 +476,7 @@ export default function ProjectsPage() {
           className="absolute right-0 bottom-0 w-72 h-72 rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(168,85,247,0.08) 0%, transparent 70%)", filter: "blur(80px)" }}
         />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           {/* Section header */}
           <div className="text-center mb-14 space-y-4">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,212,255,0.2)] bg-[rgba(0,212,255,0.05)] text-[#00d4ff] text-xs font-medium animate-fade-in">

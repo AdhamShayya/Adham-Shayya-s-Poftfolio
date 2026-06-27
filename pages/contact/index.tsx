@@ -49,7 +49,7 @@ export default function ContactPage() {
             transform: `translateY(${scrollY * 0.06}px)`,
           }}
         />
-        <div className="container mx-auto px-4 relative z-10 text-center">
+        <div className="container mx-auto relative z-10 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,212,255,0.3)] bg-[rgba(0,212,255,0.06)] text-[#00d4ff] text-xs font-medium mb-8 animate-fade-in">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00d4ff] animate-pulse" />
             Available Now
@@ -68,8 +68,8 @@ export default function ContactPage() {
 
       {/* ── Main content ── */}
       <section className="pb-32 relative">
-        <div className="container mx-auto px-4">
-          <div className="grid lg:grid-cols-5 gap-10 max-w-5xl mx-auto">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-5 gap-10 mx-auto">
             {/* Left: contact cards */}
             <div className="lg:col-span-2 space-y-4">
               {CONTACT_INFO.map((c, i) => (

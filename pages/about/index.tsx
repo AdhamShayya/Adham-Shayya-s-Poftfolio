@@ -138,7 +138,7 @@ export default function AboutPage() {
             transform: `translateY(${scrollY * 0.06}px)`,
           }}
         />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(168,85,247,0.3)] bg-[rgba(168,85,247,0.06)] text-[#a855f7] text-xs font-medium mb-8 animate-fade-in">
               <span className="w-1.5 h-1.5 rounded-full bg-[#a855f7]" />
@@ -160,7 +160,7 @@ export default function AboutPage() {
 
       {/* ── Stats ── */}
       <section ref={statsRef} className="py-14 border-y border-[rgba(0,212,255,0.08)]">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {STATS.map((s, i) => (
               <div
@@ -187,7 +187,7 @@ export default function AboutPage() {
           className="absolute left-0 top-1/2 w-72 h-72 rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(0,212,255,0.08) 0%, transparent 70%)", filter: "blur(80px)" }}
         />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           <div className="text-center mb-16">
             <span className="text-xs text-[#00d4ff] uppercase tracking-[0.2em] font-medium">Career</span>
             <h2 className="text-3xl md:text-4xl font-extrabold font-serif text-[#e8eaf6] mt-3">Work Experience</h2>
@@ -213,7 +213,7 @@ export default function AboutPage() {
           className="absolute right-0 top-0 w-80 h-80 rounded-full pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(0,255,136,0.07) 0%, transparent 70%)", filter: "blur(90px)" }}
         />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 max-w-5xl mx-auto">
             {/* Skill bars */}
             <div>

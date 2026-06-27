@@ -175,7 +175,7 @@ export default function HomePage() {
         />
 
         {/* Content */}
-        <div className="container mx-auto px-4 relative z-10 pt-8 pb-20">
+        <div className="container mx-auto relative z-10 pt-8 pb-20">
           {/* Status badge */}
           <div className="flex justify-center mb-8 animate-fade-in-down">
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[rgba(0,255,136,0.3)] bg-[rgba(0,255,136,0.06)] text-electric text-xs font-medium">
@@ -251,7 +251,7 @@ export default function HomePage() {
       ════════════════════════════════════════════════════ */}
       <section ref={statsRef} className="relative py-16 border-y border-[rgba(0,212,255,0.08)]">
         <div className="absolute inset-0 bg-linear-to-r from-[rgba(0,212,255,0.02)] via-[rgba(124,58,237,0.03)] to-[rgba(0,255,136,0.02)]" />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {STATS.map((s, i) => (
               <div
@@ -297,7 +297,7 @@ export default function HomePage() {
       ════════════════════════════════════════════════════ */}
       <section className="py-24 relative overflow-hidden">
         <Orb color="rgba(124,58,237,0.15)" size={400} top="50%" left="90%" blur={100} />
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
           <div className="text-center mb-16">
             <span className="text-xs text-[#00d4ff] uppercase tracking-[0.2em] font-medium">Selected Work</span>
             <h2 className="text-4xl md:text-5xl font-extrabold font-serif text-text mt-3">
@@ -328,7 +328,7 @@ export default function HomePage() {
           <GridBg />
           <Orb color="rgba(0,212,255,0.2)" size={500} top="50%" left="50%" blur={120} />
         </div>
-        <div className="container mx-auto px-4 text-center relative z-10">
+        <div className="container mx-auto text-center relative z-10">
           <h2
             className="font-serif font-extrabold text-text mb-6"
             style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}

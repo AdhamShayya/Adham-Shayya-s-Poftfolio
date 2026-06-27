@@ -170,15 +170,7 @@ export interface Project {
 }
 
 export const PROJECTS: Project[] = [
-  {
-    name: "Brando",
-    url: "https://brando.no",
-    description:
-      "Full-stack Norwegian brand platform. Built with React, Node.js and PostgreSQL. Deployed on Fly.io with Cloudflare for asset delivery.",
-    tags: ["React", "Node.js", "PostgreSQL", "Cloudflare"],
-    category: "fullstack",
-    accent: "74,127,165",
-  },
+
   {
     name: "Sainte",
     url: "https://sainte.fly.dev",
@@ -188,15 +180,7 @@ export const PROJECTS: Project[] = [
     category: "fullstack",
     accent: "139,158,108",
   },
-  {
-    name: "Sparknow",
-    url: "https://sparknow.fly.dev",
-    description:
-      "Feature-rich SaaS platform with job queues, TRPC, Sharp image processing and SWC-compiled backend.",
-    tags: ["TRPC", "Sharp", "Job Queues", "TypeScript", "Fly.io"],
-    category: "fullstack",
-    accent: "212,168,67",
-  },
+
   {
     name: "AK",
     url: "https://ak-new.fly.dev",
