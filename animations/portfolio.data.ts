@@ -167,9 +167,37 @@ export interface Project {
   tags: string[];
   category: "fullstack" | "shopify" | "freelance";
   accent: string;
+  /** Shown in the home page "Featured Projects" section */
+  featured?: boolean;
+  /** Full list of functionalities, rendered under the description */
+  features?: string[];
 }
 
 export const PROJECTS: Project[] = [
+  {
+    name: "Q-Ai",
+    url: "https://q-aistudy.com",
+    description:
+      "AI learning platform using RAG with hybrid vector + keyword search to answer students' questions from their own uploaded material, plus auto-generated flashcards, quizzes and study guides.",
+    features: [
+      "Role-based access for 5 roles (student, institution student, institution admin, affiliate, platform admin), each with dedicated dashboards and server-enforced permissions",
+      "Background AI pipelines with multi-model failover and cost controls",
+      "School portal, affiliate payments and a trilingual UI (Arabic, English & French)",
+      "AI Tutor Chat — ask anything about a course, answered only from your documents",
+      "Learning DNA Quiz — 60-second profile that tunes tone, analogies and depth to your cognitive style",
+      "Deep Study — read PDFs with a tutor sidebar that explains or reads the current page aloud",
+      "Study Mode — turns a whole course into a structured summary & study guide",
+      "Flashcards — spaced repetition generated from your material",
+      "MCQ Practice — exam-style multiple choice built from your documents",
+      "Study Planner — schedule sessions and track coverage across courses",
+      "Course management — upload PDFs, slides and notes, organized per course",
+      "Grounded answers — refuses to invent when the answer isn't in your material",
+    ],
+    tags: ["React", "tRPC", "Node.js", "PostgreSQL/pgvector", "Gemini", "Docker", "Fly.io"],
+    category: "freelance",
+    accent: "168,85,247",
+    featured: true,
+  },
 
   {
     name: "Sainte",
@@ -213,8 +241,8 @@ export const SHOPIFY_STORES: ShopifyStore[] = [
   { name: "Arch Angel", url: "https://arch-angel-shop.myshopify.com", niche: "Streetwear" },
   { name: "Discipline AU", url: "https://disciplineau.myshopify.com", niche: "Performance Wear" },
   { name: "Legends Barbell", url: "https://legendsbarbell.myshopify.com", niche: "Powerlifting" },
-  { name: "Game Athletics", url: "https://gameathletics.myshopify.com", niche: "Sport & Gaming" },
-  { name: "Morfactive", url: "https://morfactive.myshopify.com", niche: "Active Lifestyle" },
+  // { name: "Game Athletics", url: "https://gameathletics.myshopify.com", niche: "Sport & Gaming" },
+  // { name: "Morfactive", url: "https://morfactive.myshopify.com", niche: "Active Lifestyle" },
   { name: "Numuv", url: "https://numuveshop.myshopify.com", niche: "Lifestyle" },
   { name: "WetSkin", url: "https://shopwetskin.myshopify.com", niche: "Skincare" },
   { name: "Hyparx Fitness", url: "https://hyparxfitness.myshopify.com", niche: "Fitness" },

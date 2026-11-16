@@ -100,9 +100,19 @@ function IframeCard({ p, index }: { p: Project; index: number }) {
               {p.category === "fullstack" ? "Full-Stack" : p.category === "shopify" ? "Shopify" : "Freelance"}
             </span>
           </div>
-          <p className="text-sm text-[#8892b0] leading-relaxed mb-4 line-clamp-2">{p.description}</p>
+          <p className={`text-sm text-[#8892b0] leading-relaxed mb-4 ${p.features ? "" : "line-clamp-2"}`}>{p.description}</p>
+          {p.features && (
+            <ul className="mb-4 space-y-1.5 list-none p-0">
+              {p.features.map((f) => (
+                <li key={f} className="flex gap-2 text-xs text-[#8892b0] leading-relaxed">
+                  <span style={{ color: accent }}>▹</span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          )}
           <div className="flex flex-wrap gap-1.5">
-            {p.tags.slice(0, 5).map((t) => (
+            {(p.features ? p.tags : p.tags.slice(0, 5)).map((t) => (
               <span key={t} className="text-[10px] px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.05)] text-[#4a5568] font-mono">{t}</span>
             ))}
           </div>

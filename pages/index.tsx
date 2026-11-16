@@ -99,9 +99,19 @@ function ProjectCard({ p, index }: { p: Project; index: number }) {
         <h3 className="text-lg font-bold text-text mb-2 group-hover:text-[#00d4ff] transition-colors">
           {p.name}
         </h3>
-        <p className="text-sm text-text-secondary leading-relaxed mb-4 line-clamp-2">{p.description}</p>
+        <p className={`text-sm text-text-secondary leading-relaxed mb-4 `}>{p.description}</p>
+        {p.features && (
+          <ul className="mb-4 space-y-1.5 list-none p-0">
+            {p.features.map((f) => (
+              <li key={f} className="flex gap-2 text-xs text-text-secondary leading-relaxed">
+                <span style={{ color: accent }}>▹</span>
+                <span>{f}</span>
+              </li>
+            ))}
+          </ul>
+        )}
         <div className="flex flex-wrap gap-1.5">
-          {p.tags.slice(0, 4).map((t) => (
+          {(p.features ? p.tags : p.tags.slice(0, 4)).map((t) => (
             <span key={t} className="text-[11px] px-2 py-0.5 rounded-md bg-[rgba(255,255,255,0.05)] text-text-secondary">
               {t}
             </span>
@@ -304,8 +314,8 @@ export default function HomePage() {
               Featured Projects
             </h2>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {PROJECTS.map((p, i) => (
+          <div className="flex gap-6 w-full justify-center">
+            {PROJECTS.filter((p) => p.featured).map((p, i) => (
               <ProjectCard key={p.name} p={p} index={i} />
             ))}
           </div>
